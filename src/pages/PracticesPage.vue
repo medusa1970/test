@@ -191,7 +191,7 @@ export default defineComponent({
       selectedItem.value = item;
     };
     const editItem = (item) => {
-      items.value[1] = {
+      items.value[items.value.indexOf(item)] = {
         id: item.id,
         name: newItem.value,
         price: price.value,

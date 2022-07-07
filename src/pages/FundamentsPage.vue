@@ -28,7 +28,7 @@
         />
         <q-input label="Precio" outlined v-model="price" />
         <q-input label="Cantidad" outlined v-model="amount" />
-        <q-checkbox label="Importancia" v-model="high" />
+        <q-checkbox label="Importante" v-model="high" />
         <q-btn label="Agregar" color="primary" type="submit" />
       </q-form>
       <q-list bordered separator>

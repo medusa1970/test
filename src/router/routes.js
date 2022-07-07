@@ -27,6 +27,26 @@ const routes = [
     ],
   },
 
+  {
+    path: "/curso",
+    component: () => import("layouts/CursoLy.vue"),
+    children: [
+      { path: "", component: () => import("pages/curso/HijoPage.vue") },
+      {
+        path: "hijouno",
+        component: () => import("pages/curso/HijoUnoPage.vue"),
+      },
+    ],
+  },
+
+  {
+    path: "/admin",
+    component: () => import("layouts/AdminAuthLy.vue"),
+    children: [
+      { path: "", component: () => import("pages/admin/AdminPage.vue") },
+    ],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {
