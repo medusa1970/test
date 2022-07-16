@@ -59,11 +59,13 @@
 import { defineComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useAuthStore } from "stores/AuthStore";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "AdminAuthLy",
   setup() {
     const $q = useQuasar();
+    const router = useRouter();
     const authStore = useAuthStore();
     const username = ref(null);
     const password = ref(null);
@@ -74,20 +76,19 @@ export default defineComponent({
       isPwd: ref(true),
       authStore,
       onSubmit() {
-        authStore
-          .login(username.value, password.value)
-          .then(() => {
-            $q.notify({
-              color: "positive",
-              text: "Ingreso correcto",
-            });
-          })
-          .catch(() => {
-            $q.notify({
-              color: "negative",
-              text: "Ingreso incorrecto",
-            });
+        if (username.value === "medusa" && password.value === "meduse") {
+          $q.notify({
+            message: "Usted ingreso correctamente",
+            icon: "thumb_up_alt",
           });
+          router.push("/protected");
+        } else {
+          $q.notify({
+            message: "Usted ingreso incorrectamente",
+            icon: "thumb_down_alt",
+            color: "negative",
+          });
+        }
       },
 
       onReset() {
