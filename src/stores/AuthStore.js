@@ -6,10 +6,10 @@ export const useAuthStore = defineStore("AuthStore", {
     user: "Jaime Vallejos",
   }),
   actions: {
-    async login(email, password) {
+    async login(username, password) {
       try {
         const response = await api.post("api/auth/signin", {
-          email,
+          username,
           password,
         });
         this.user = response.data;

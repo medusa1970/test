@@ -28,18 +28,6 @@ const routes = [
   },
 
   {
-    path: "/curso",
-    component: () => import("layouts/CursoLy.vue"),
-    children: [
-      { path: "", component: () => import("pages/curso/HijoPage.vue") },
-      {
-        path: "hijouno",
-        component: () => import("pages/curso/HijoUnoPage.vue"),
-      },
-    ],
-  },
-
-  {
     path: "/admin",
     component: () => import("layouts/AdminAuthLy.vue"),
     children: [
@@ -52,6 +40,23 @@ const routes = [
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
+  },
+
+  {
+    path: "/myapp",
+    component: () => import("layouts/MyAppAuthLy.vue"),
+    children: [
+      { path: "", component: () => import("pages/myapp/LoginPage.vue") },
+      {
+        path: "recover",
+        component: () => import("pages/myapp/RecoverPage.vue"),
+      },
+      {
+        path: "change",
+        component: () => import("pages/myapp/ChangePage.vue"),
+      },
+      { path: "singup", component: () => import("pages/myapp/SingUpPage.vue") },
+    ],
   },
 ];
 

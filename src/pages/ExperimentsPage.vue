@@ -3,7 +3,7 @@
     <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
       <q-input
         filled
-        v-model="email"
+        v-model="username"
         label="Tu ususario o email *"
         hint="Name and surname"
         lazy-rules
@@ -43,31 +43,34 @@
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { useAuthStore } from "stores/AuthStore";
+import { api } from "boot/axios";
 
 export default {
   setup() {
     const $q = useQuasar();
     const authStore = useAuthStore();
-    const email = ref("medusa@gmail.com");
+    const username = ref("jaimewvf@gmail.com");
     const password = ref("meduse");
 
     return {
-      email,
+      username,
       password,
       authStore,
 
-      onSubmit() {
-        authStore.login(email.value, password.value);
+      async onSubmit() {
+        authStore.login(username.value, password.value);
+        response = await api.get("https://ipinfo.io/json");
+        console.log(response);
         $q.notify({
           color: "secondary",
           textColor: "white",
           icon: "settings",
-          message: `Username: ${email.value} - Password: ${password.value}`,
+          message: `Username: ${username.value} - Password: ${password.value}`,
         });
       },
 
       onReset() {
-        email.value = null;
+        username.value = null;
         password.value = null;
       },
     };
