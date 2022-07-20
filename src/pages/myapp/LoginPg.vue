@@ -68,6 +68,7 @@ export default {
       password,
       onSubmit() {
         if (username.value === "admin" && password.value === "admin") {
+          $q.localStorage.set("security", "Yo soy un genio");
           $q.notify({
             color: "positive",
             textColor: "white",
@@ -75,6 +76,7 @@ export default {
           });
           router.push("/");
         } else {
+          $q.localStorage.remove("security");
           $q.notify({
             color: "red",
             textColor: "white",

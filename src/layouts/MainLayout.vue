@@ -14,6 +14,7 @@
         <q-toolbar-title> Curso avanzado de VUE 3 </q-toolbar-title>
 
         <div>Por.: Jaime Vallejos</div>
+        <q-btn flat icon="logout" @click="logout" />
       </q-toolbar>
     </q-header>
 
@@ -36,8 +37,10 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
+import { useQuasar } from "quasar";
+import { useRouter } from "vue-router";
 
 const linksList = [
   {
@@ -86,13 +89,24 @@ export default defineComponent({
   },
 
   setup() {
+    const $q = useQuasar();
+    const router = useRouter();
     const leftDrawerOpen = ref(false);
+    onMounted(() => {
+      if ($q.localStorage.getItem("security") == null) {
+        router.push("/myapp");
+      }
+    });
 
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
+      },
+      logout() {
+        $q.localStorage.remove("security");
+        router.push("/myapp");
       },
     };
   },
