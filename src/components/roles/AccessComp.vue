@@ -68,7 +68,7 @@
         <q-btn
           color="secondary"
           label="Agregar"
-          @click="roleStore.addRole(newItem, icon)"
+          @click="roleStore.addAccess(newItem, icon)"
           v-close-popup
         />
       </q-card-actions>

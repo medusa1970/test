@@ -34,29 +34,25 @@ const routes = [
       { path: "", component: () => import("pages/admin/AdminPage.vue") },
     ],
   },
+  {
+    path: "/myapp",
+    component: () => import("layouts/MyAppAuthLy.vue"),
+    children: [
+      { path: "", component: () => import("pages/myapp/LoginPg.vue") },
+      { path: "recover", component: () => import("pages/myapp/RecoverPg.vue") },
+      { path: "change", component: () => import("pages/myapp/ChangePg.vue") },
+      {
+        path: "register",
+        component: () => import("pages/myapp/RegisterPg.vue"),
+      },
+    ],
+  },
 
   // Always leave this as last one,
   // but you can also remove it
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
-  },
-
-  {
-    path: "/myapp",
-    component: () => import("layouts/MyAppAuthLy.vue"),
-    children: [
-      { path: "", component: () => import("pages/myapp/LoginPage.vue") },
-      {
-        path: "recover",
-        component: () => import("pages/myapp/RecoverPage.vue"),
-      },
-      {
-        path: "change",
-        component: () => import("pages/myapp/ChangePage.vue"),
-      },
-      { path: "singup", component: () => import("pages/myapp/SingUpPage.vue") },
-    ],
   },
 ];
 

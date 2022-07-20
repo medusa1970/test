@@ -58,7 +58,6 @@
         <q-input label="Icono" outlined v-model="icon"></q-input>
       </q-card-section>
 
-      <!-- Notice v-close-popup -->
       <q-card-actions class="justify-center">
         <q-btn
           color="primary"
@@ -68,36 +67,7 @@
         <q-btn
           color="secondary"
           label="Agregar"
-          @click="roleStore.addRole(newItem, icon)"
-          v-close-popup
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-
-  <q-dialog v-model="dialog" persistent>
-    <q-card>
-      <q-card-section class="row items-center">
-        <q-avatar icon="engineering" color="secondary" text-color="white" />
-        <h6 class="q-ml-sm q-my-none">Agregando nueva area de trabajo</h6>
-      </q-card-section>
-
-      <q-card-section class="q-gutter-md">
-        <q-input label="Nueva Area" outlined v-model="newItem"></q-input>
-        <q-input label="Icono" outlined v-model="icon"></q-input>
-      </q-card-section>
-
-      <!-- Notice v-close-popup -->
-      <q-card-actions class="justify-center">
-        <q-btn
-          color="primary"
-          label="Cancelar"
-          v-close-popup="!cancelEnabled"
-        />
-        <q-btn
-          color="secondary"
-          label="Agregar"
-          @click="roleStore.addRole(newItem, icon)"
+          @click="roleStore.addArea(newItem, icon)"
           v-close-popup
         />
       </q-card-actions>

@@ -10,10 +10,11 @@
       <LinksComp />
     </div>
   </div>
+  {{ roleStore.areas }}
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useRoleStore } from "stores/RoleStore";
 import AreasComp from "src/components/roles/AreasComp.vue";
@@ -35,6 +36,9 @@ export default defineComponent({
     const icon = ref("");
     const selectedArea = ref("Seleccione Area");
 
+    onMounted(() => {
+      roleStore.load();
+    });
     return {
       roleStore,
       newArea,
