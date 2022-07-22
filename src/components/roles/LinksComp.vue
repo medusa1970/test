@@ -8,15 +8,19 @@
       glossy
       no-caps
       icon="manage_accounts"
-      :label="selectedItem ? 'Link: ' + selectedItem : 'Seleccione un link'"
+      :label="
+        roleStore.linksSelected.name
+          ? 'Acceso: ' + roleStore.linksSelected.name
+          : 'Seleccione un link'
+      "
     >
       <q-list separator>
         <q-item
-          v-for="({ name, icon }, index) in roleStore.links.links"
+          v-for="({ name, icon }, index) in roleStore.accessSelected.links"
           :key="index"
           clickable
           v-close-popup
-          @click="onItemClick(roleStore.links.links[index])"
+          @click="onItemClick(roleStore.accessSelected.links[index])"
         >
           <q-item-section avatar>
             <q-avatar :icon="icon" color="primary" text-color="white" />
@@ -96,7 +100,7 @@ export default defineComponent({
       cancelEnabled: ref(false),
 
       onItemClick(item) {
-        selectedItem.value = item.name;
+        roleStore.selectedLinks(item);
         $q.notify({
           message: item.name,
           icon: item.icon,

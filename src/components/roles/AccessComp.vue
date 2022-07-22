@@ -9,18 +9,18 @@
       no-caps
       icon="manage_accounts"
       :label="
-        roleStore.links.name
-          ? 'Acceso: ' + roleStore.links.name
+        roleStore.accessSelected.name
+          ? 'Acceso: ' + roleStore.accessSelected.name
           : 'Seleccione una Acceso'
       "
     >
       <q-list separator>
         <q-item
-          v-for="({ name, icon }, index) in roleStore.access.access"
+          v-for="({ name, icon }, index) in roleStore.areaSelected.access"
           :key="index"
           clickable
           v-close-popup
-          @click="onItemClick(roleStore.access.access[index])"
+          @click="onItemClick(roleStore.areaSelected.access[index])"
         >
           <q-item-section avatar>
             <q-avatar :icon="icon" color="primary" text-color="white" />
@@ -98,7 +98,7 @@ export default defineComponent({
       cancelEnabled: ref(false),
 
       onItemClick(item) {
-        roleStore.listLinks(item);
+        roleStore.selectedAccess(item);
         $q.notify({
           message: item.name,
           icon: item.icon,

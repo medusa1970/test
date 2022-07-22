@@ -3,14 +3,22 @@
     <div class="col-4">
       <AreasComp />
     </div>
-    <div v-if="roleStore.access" class="col-4">
+    <div v-if="roleStore.areaSelected" class="col-4">
       <AccessComp />
     </div>
-    <div v-if="roleStore.links" class="col-4">
+    <div v-if="roleStore.accessSelected" class="col-4">
       <LinksComp />
     </div>
   </div>
-  {{ roleStore.areas }}
+  {{ roleStore.areaSelected }}
+  <br /><br />
+  {{ roleStore.accessSelected }}
+  <br /><br />
+  {{ roleStore.linksSelected }}
+  <br /><br />
+  {{ roleStore.botar }}
+
+  <br />
 </template>
 
 <script>

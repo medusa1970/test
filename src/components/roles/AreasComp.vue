@@ -9,8 +9,8 @@
       no-caps
       icon="manage_accounts"
       :label="
-        roleStore.access.name
-          ? 'Area: ' + roleStore.access.name
+        roleStore.areaSelected.name
+          ? 'Area: ' + roleStore.areaSelected.name
           : 'Seleccione una area'
       "
     >
@@ -97,7 +97,7 @@ export default defineComponent({
       cancelEnabled: ref(false),
 
       onItemClick(item) {
-        roleStore.listAccess(item);
+        roleStore.selectedArea(item);
         $q.notify({
           message: item.name,
           icon: item.icon,

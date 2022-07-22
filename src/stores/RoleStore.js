@@ -4,8 +4,10 @@ import { api } from "boot/axios";
 export const useRoleStore = defineStore("RoleStore", {
   state: () => ({
     areas: "",
-    access: "",
-    links: "",
+    areaSelected: "",
+    accessSelected: "",
+    linksSelected: "",
+    botar: "vacio",
   }),
   getters: {
     getAreas: (state) => state.areas,
@@ -19,12 +21,25 @@ export const useRoleStore = defineStore("RoleStore", {
     addArea(name, icon) {
       this.areas.push({ name, typeuser: 0, icon });
     },
-    listAccess(item) {
-      this.access = item;
-      this.links = "";
+    selectedArea(item) {
+      this.areaSelected = item;
+      this.accessSelected = "";
+      this.linksSelected = "";
     },
-    listLinks(item) {
-      this.links = item;
+    selectedAccess(item) {
+      this.accessSelected = item;
+      this.linksSelected = "";
+    },
+    selectedLinks(item) {
+      this.linksSelected = item;
+      let id = this.linksSelected._id;
+
+      //this.linksSelected.name = "jaimito";
+      //this.accessSelected.links.push({ name: "chiwawa", route: "waw1" });
+      //this.accessSelected.links.splice(this.accessSelected.links.indexOf(id), 1);
+      this.accessSelected.links = this.accessSelected.links.filter(
+        (link) => link._id !== id
+      );
     },
   },
 });
