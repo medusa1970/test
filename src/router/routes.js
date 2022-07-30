@@ -1,6 +1,14 @@
 const routes = [
   {
     path: "/",
+    component: () => import("layouts/MainLy.vue"),
+    children: [
+      { path: "", component: () => import("pages/main/HomePg.vue") },
+      { path: "signin", component: () => import("pages/main/SigninPg.vue") },
+    ],
+  },
+  {
+    path: "/aaa",
     component: () => import("layouts/MainLayout.vue"),
     children: [
       { path: "", component: () => import("pages/IndexPage.vue") },
@@ -26,7 +34,6 @@ const routes = [
       },
     ],
   },
-
   {
     path: "/admin",
     component: () => import("layouts/AdminAuthLy.vue"),

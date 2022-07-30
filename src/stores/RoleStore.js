@@ -7,7 +7,7 @@ export const useRoleStore = defineStore("RoleStore", {
     areaSelected: "",
     accessSelected: "",
     linksSelected: "",
-    botar: "vacio",
+    user: {},
   }),
   getters: {
     getAreas: (state) => state.areas,
@@ -40,6 +40,16 @@ export const useRoleStore = defineStore("RoleStore", {
       this.accessSelected.links = this.accessSelected.links.filter(
         (link) => link._id !== id
       );
+    },
+    login(username, password) {
+      console.log(username, password);
+      try {
+        this.user = api.post("api/auth/signin", { username, password });
+        console.log(this.user);
+        return true;
+      } catch (error) {
+        return false;
+      }
     },
   },
 });

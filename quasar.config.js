@@ -54,6 +54,7 @@ module.exports = configure(function (/* ctx */) {
       },
 
       vueRouterMode: "history", // available values: 'hash', 'history'
+
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,

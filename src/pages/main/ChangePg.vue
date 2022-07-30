@@ -5,22 +5,30 @@
         <h6 class="q-mb-sm">Datos de acceso</h6>
         <q-input
           filled
-          v-model="username"
-          label="Tu usuario o email *"
-          hint="tu usuario Sii-Pi"
+          v-model="codigo"
+          label="Ingresa el codigo que fue enviaso a tu email *"
           lazy-rules
           :rules="[
             (val) => (val && val.length > 0) || 'Ingresa tu usuario o email',
           ]"
         />
-
         <q-input
           filled
           type="password"
-          v-model="password"
-          label="Tu password *"
+          v-model="newPassword"
+          label="Ingresa nuevo password *"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Ingresa tu password']"
+          :rules="[
+            (val) => (val && val.length > 0) || 'Ingresa tu nuevo password',
+          ]"
+        />
+        <q-input
+          filled
+          type="password"
+          v-model="matchPassword"
+          label="Repite tu password *"
+          lazy-rules
+          :rules="[(val) => (val && val.length > 0) || 'Repite el password']"
         />
 
         <div>
@@ -51,49 +59,33 @@
       />
     </div>
   </div>
-  {{ roleStore.user }}
 </template>
+
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
-import { useRoleStore } from "stores/RoleStore";
-
 export default {
   data() {
     const $q = useQuasar();
     const router = useRouter();
-    const roleStore = useRoleStore();
-    const username = ref("");
-    const password = ref("");
 
     return {
-      username,
-      password,
-      roleStore,
+      codigo: ref(""),
+      newPassword: ref(""),
+      matchPassword: ref(""),
       onSubmit() {
-        const val = roleStore.login(username.value, password.value);
-        if (val) {
-          $q.localStorage.set("security", "Yo soy un genio");
-          $q.notify({
-            color: "positive",
-            textColor: "white",
-            message: "Bienvenido",
-          });
-          router.push("/");
-        } else {
-          $q.localStorage.remove("security");
-          $q.notify({
-            color: "red",
-            textColor: "white",
-            message: "Datos incorrectos",
-          });
-        }
+        $q.notify({
+          color: "red-5",
+          textColor: "white",
+          icon: "email",
+          message: "Tu password fue cambiado con exito",
+        });
+        router.push("/myapp");
       },
 
       onReset() {
-        username.value = null;
-        password.value = null;
+        email.value = null;
       },
     };
   },

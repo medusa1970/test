@@ -3,19 +3,23 @@ import { api } from "boot/axios";
 
 export const useAuthStore = defineStore("AuthStore", {
   state: () => ({
-    user: "Jaime Vallejos",
+    user: "",
   }),
   actions: {
-    async login(username, password) {
+    async signin(username, password) {
       try {
         const response = await api.post("api/auth/signin", {
           username,
           password,
         });
-        this.user = response.data;
+        return (this.user = response.data);
       } catch (error) {
         console.log(error);
       }
+    },
+
+    async logout() {
+      this.user = "";
     },
   },
 });
