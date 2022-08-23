@@ -1,117 +1,118 @@
 <template>
-  <q-layout>
+  <q-layout container style="height: 100vh" class="shadow-2 rounded-borders">
     <q-header elevated class="bg-blue-grey-2">
-      <!-- <q-img src="../assets/image/fondo.jpg" class="absolute-bottom" /> -->
-      <q-toolbar class="row">
-        <img
-          src="../assets/image/logo-sii-pi-verde.svg"
-          class="col-md-1 col-xs-3 q-my-md"
-        />
-        <div class="q-gutter-md q-mt-md q-ml-xl">
-          <q-btn
-            flat
-            color="black"
-            icon="restaurant"
-            label="Menu"
-            @click="dialog = true"
-          />
-          <q-btn
-            flat
-            color="black"
-            icon="celebration"
-            label="Promociones"
-            @click="dialog = true"
-          />
-          <q-btn
-            flat
-            color="black"
-            icon="las la-store-alt"
-            label="Productos"
-            @click="dialog = true"
-          />
-          <q-btn
-            flat
-            color="black"
-            icon="location_on"
-            label="Encuentranos"
-            @click="dialog = true"
-          />
-          <q-btn
-            flat
-            color="black"
-            icon="question_answer"
-            label="Sii-pi"
-            @click="dialog = true"
+      <q-toolbar class="justify-between">
+        <div class="row items-center">
+          <div>
+            <q-btn
+              glossy
+              @click="drawer = !drawer"
+              round
+              dense
+              icon="menu"
+              color="blue-grey-9"
+              class="q-mr-sm"
+            />
+          </div>
+          <img
+            src="../assets/image/logo-sii-pi-verde.svg"
+            style="height: 6vh"
+            class="q-my-xs"
           />
         </div>
-
-        <q-toolbar-title />
-
-        <div v-if="!authStore.user" class="q-gutter-sm q-mt-md">
-          <q-fab
-            padding="xs"
-            icon="account_circle"
-            v-model="fab1"
-            vertical-actions-align="right"
-            color="blue-grey-9"
-            glossy
-            direction="down"
-          >
-            <q-fab-action
-              square
-              color="blue-grey-8"
-              @click="onClick"
-              icon="login"
-              label="Ingresar"
-              label-position="left"
-              to="/signin"
-            />
-            <q-fab-action
-              square
-              color="blue-grey-8"
-              @click="authStore.logout()"
-              to="signup"
-              icon="assignment"
-              label="Registrarme"
-              label-position="left"
-            />
-          </q-fab>
-        </div>
-
-        <div v-else class="q-gutter-sm q-mt-md">
-          <q-fab
-            padding="xs"
-            icon="account_circle"
-            v-model="fab2"
-            vertical-actions-align="right"
-            color="blue-grey-9"
-            glossy
-            :label="authStore.user.user.username"
-            direction="down"
-          >
-            <q-fab-action
-              square
-              color="blue-grey-8"
-              @click="onClick"
+        <div class="row">
+          <div v-if="!authStore.loggedIn" class="q-gutter-sm">
+            <q-fab
+              padding="xs"
               icon="manage_accounts"
-              label="Mi Perfil"
-              label-position="left"
-              to="profile"
-            />
-            <q-fab-action
-              square
-              color="blue-grey-8"
-              @click="signOut"
-              icon="logout"
-              label="Salir"
-              label-position="left"
-            />
-          </q-fab>
+              v-model="fab1"
+              vertical-actions-align="right"
+              color="blue-grey-9"
+              glossy
+              direction="down"
+            >
+              <q-fab-action
+                square
+                color="blue-grey-8"
+                icon="login"
+                label="Ingresar"
+                label-position="left"
+                to="/signin"
+              />
+              <q-fab-action
+                square
+                color="blue-grey-8"
+                to="signup"
+                icon="assignment"
+                label="Registrarme"
+                label-position="left"
+              />
+            </q-fab>
+          </div>
+
+          <div v-else class="q-gutter-sm">
+            <q-fab
+              padding="xs"
+              icon="manage_accounts"
+              v-model="fab2"
+              vertical-actions-align="right"
+              color="blue-grey-9"
+              glossy
+              :label="authStore.loggedIn.username"
+              direction="down"
+            >
+              <q-fab-action
+                square
+                color="blue-grey-8"
+                @click="onClick"
+                icon="manage_accounts"
+                label="Mi Perfil"
+                label-position="left"
+                to="profile"
+              />
+              <q-fab-action
+                square
+                color="blue-grey-8"
+                @click="logout"
+                icon="logout"
+                label="Salir"
+                label-position="left"
+              />
+            </q-fab>
+          </div>
         </div>
       </q-toolbar>
     </q-header>
+
+    <q-drawer
+      v-model="drawer"
+      show-if-above
+      :width="250"
+      :breakpoint="500"
+      bordered
+      class="bg-grey-3"
+    >
+      <q-scroll-area class="fit">
+        <q-list>
+          <template v-for="(menuItem, index) in menuList" :key="index">
+            <q-item clickable :active="menuItem.label === 'Outbox'" v-ripple>
+              <q-item-section avatar>
+                <q-icon :name="menuItem.icon" />
+              </q-item-section>
+              <q-item-section>
+                {{ menuItem.label }}
+              </q-item-section>
+            </q-item>
+            <q-separator :key="'sep' + index" v-if="menuItem.separator" />
+          </template>
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
+
     <q-page-container>
-      <router-view />
+      <q-page padding>
+        <router-view />
+      </q-page>
     </q-page-container>
   </q-layout>
 
@@ -140,10 +141,37 @@
 
 <script>
 import { ref } from "vue";
-import { useAuthStore } from "stores/AuthStore";
+import { useAuthStore } from "stores/auth-store";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 
+const menuList = [
+  {
+    icon: "restaurant",
+    label: "Menu",
+    separator: true,
+  },
+  {
+    icon: "celebration",
+    label: "Promociones",
+    separator: false,
+  },
+  {
+    icon: "las la-store-alt",
+    label: "Productos",
+    separator: true,
+  },
+  {
+    icon: "location_on",
+    label: "Encuentranos",
+    separator: false,
+  },
+  {
+    icon: "question_answer",
+    label: "Sii-pi",
+    separator: false,
+  },
+];
 export default {
   setup() {
     const $q = useQuasar();
@@ -155,15 +183,12 @@ export default {
       dialog: ref(false),
       fab1: ref(false),
       fab2: ref(false),
+      drawer: ref(false),
+      menuList,
 
-      options: [
-        { label: "One", value: "one" },
-        { label: "Two", value: "two" },
-        { label: "Three", value: "three" },
-      ],
-      signOut() {
+      logout() {
+        $q.localStorage.remove("loggedIn");
         authStore.logout();
-        $q.localStorage.remove("signin");
         router.push("/signin");
       },
     };

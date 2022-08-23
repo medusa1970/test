@@ -1,6 +1,6 @@
 <template>
   <div class="row q-pa-md justify-center">
-    <div class="col-3">
+    <div class="col-xs-10 col-sm-6 col-md-5 col-lg-5 col-xl-2">
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-lg q-mt-md">
         <h6 class="q-my-md">Datos de acceso</h6>
         <q-input
@@ -45,30 +45,29 @@
           <q-btn label="Reset" type="reset" color="black" class="q-ml-sm" />
         </div>
       </q-form>
-      <q-separator class="q-mt-lg" />
+      <q-separator class="q-my-lg" />
       <q-btn
-        to="/myapp/recover"
+        to="/recover"
         icon="key"
         flat
         label="Olvido su password"
-        class="col-4 q-my-md"
+        class="col-4 q-mt-xs"
       />
       <q-btn
-        to="/myapp/register"
+        to="/signup"
         icon="person"
         flat
         label="Registrate"
-        class="col-4 q-my-md"
+        class="col-4 q-mt-xs"
       />
     </div>
   </div>
-  {{ authStore.user }}
 </template>
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "stores/AuthStore";
+import { useAuthStore } from "stores/auth-store";
 
 export default {
   data() {
@@ -85,16 +84,19 @@ export default {
       authStore,
       async onSubmit() {
         await authStore.signin(username.value, password.value);
-        if (authStore.user.error === null) {
-          await $q.localStorage.set("signin", authStore.user);
+        if (authStore.loggedIn) {
           $q.notify({
             color: "positive",
             textColor: "white",
-            message: "Bienvenido",
+            message: `Bienvenido ${authStore.loggedIn.username}`,
           });
-          router.push("/");
+          if (authStore.loggedIn.type !== "user") {
+            router.push("/redirect");
+          } else {
+            router.push("/");
+          }
         } else {
-          $q.localStorage.remove("signin");
+          $q.localStorage.remove("loggedIn");
           $q.notify({
             color: "red",
             textColor: "white",

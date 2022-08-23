@@ -5,6 +5,19 @@ const routes = [
     children: [
       { path: "", component: () => import("pages/main/HomePg.vue") },
       { path: "signin", component: () => import("pages/main/SigninPg.vue") },
+      { path: "signup", component: () => import("pages/main/SignupPg.vue") },
+      { path: "recover", component: () => import("pages/main/RecoverPg.vue") },
+      { path: "change", component: () => import("pages/main/ChangePg.vue") },
+      {
+        path: "redirect",
+        component: () => import("pages/main/RedirectPg.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "profile",
+        component: () => import("pages/main/ProfilePg.vue"),
+        meta: { requiresAuth: true },
+      },
     ],
   },
   {
@@ -36,9 +49,31 @@ const routes = [
   },
   {
     path: "/admin",
-    component: () => import("layouts/AdminAuthLy.vue"),
+    component: () => import("layouts/AdminLy.vue"),
     children: [
-      { path: "", component: () => import("pages/admin/AdminPage.vue") },
+      { path: "", component: () => import("pages/admin/HomePg.vue") },
+      { path: "users", component: () => import("pages/admin/UsersPg.vue") },
+      {
+        path: "add-user",
+        component: () => import("pages/admin/AddUserPg.vue"),
+      },
+      {
+        path: "add-type-user",
+        component: () => import("pages/admin/AddTypeUserPg.vue"),
+      },
+      { path: "upload", component: () => import("pages/admin/UploadPg.vue") },
+      {
+        path: "add-point",
+        component: () => import("pages/points/AddPointPg.vue"),
+      },
+      {
+        path: "articles",
+        component: () => import("pages/articles/ArticlesPg.vue"),
+      },
+      {
+        path: "add-article",
+        component: () => import("pages/articles/AddArticlePg.vue"),
+      },
     ],
   },
   {

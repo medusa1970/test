@@ -2,7 +2,46 @@
   <div class="row q-pa-md justify-center">
     <div class="col-xs-10 col-sm-6 col-md-5 col-lg-5 col-xl-2">
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-lg q-mt-md">
-        <h6 class="q-my-md">Registrarme a Sii-Pi</h6>
+        <h6 class="q-my-md">{{ title }}</h6>
+        <typeUser
+          v-model="typeUser"
+          v-bind:label="'Tipo de usuario'"
+          v-bind:noData="'Sin tipos de usuario, agregue uno'"
+          v-bind:Icon="'people_alt'"
+          v-bind:data="
+            userStore.TypeUser.map((item) => ({
+              label: item.name,
+              value: item._id,
+            }))
+          "
+          v-bind:myComp="'type'"
+        />
+
+        <q-select
+          filled
+          v-model="point"
+          :options="points"
+          label="Punto Sii-Pi"
+          bg-color="amber-3"
+        >
+          <template v-slot:append>
+            <q-icon size="lg" name="storefront" />
+          </template>
+
+          <template v-slot:hint> Field hint </template>
+
+          <template v-slot:after>
+            <q-btn round color="green-14" icon="add" />
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-italic text-grey">
+                Cree un punto Sii-Pi
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+
         <q-input
           filled
           v-model="first_name"
@@ -128,20 +167,33 @@
       <q-btn to="/" icon="close" flat label="Cancelar" class="col-4 q-my-md" />
     </div>
   </div>
-  {{ authStore.user }}
 </template>
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "stores/auth-store";
+import { useUserStore } from "stores/user-store";
+
+import typeUser from "components/users/type-user.vue";
 import { api } from "boot/axios";
 
 export default {
+  name: "AddUserComp",
+  components: {
+    typeUser,
+  },
+  props: {
+    title: {
+      type: String,
+      default: "Agregar usuario",
+    },
+  },
   data() {
     const $q = useQuasar();
     const router = useRouter();
     const authStore = useAuthStore();
+    const userStore = useUserStore();
     const first_name = ref("");
     const last_name = ref("");
     const doc_id = ref("");
@@ -150,8 +202,16 @@ export default {
     const email = ref("");
     const username = ref("");
     const password = ref("");
+    const typeUser = ref("");
 
     return {
+      model: ref(null),
+      options: [
+        { value: "production", label: "Producción" },
+        { value: "point", label: "Punto Sii-Pi" },
+        { value: "admin", label: "Administrador" },
+        { value: "user", label: "Usuario Sii-pi" },
+      ],
       first_name,
       last_name,
       doc_id,
@@ -162,7 +222,10 @@ export default {
       password,
       isPwd: ref(true),
       authStore,
+      userStore,
       router,
+      $q,
+      typeUser,
       async onSubmit() {
         try {
           const { data } = await api.post("/api/auth/signup", {
