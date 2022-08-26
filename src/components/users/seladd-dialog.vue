@@ -58,11 +58,9 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { useQuasar } from "quasar";
 
 export default defineComponent({
   setup() {
-    const $q = useQuasar();
     const newItem = ref("");
     const icon = ref("");
 
@@ -71,7 +69,6 @@ export default defineComponent({
         console.log("cancel");
         dialog.value = false;
       },
-      lorem: "Lorem ipsum dolor sit amet.",
     };
   },
 });

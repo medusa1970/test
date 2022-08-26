@@ -52,7 +52,7 @@ const routes = [
     component: () => import("layouts/AdminLy.vue"),
     children: [
       { path: "", component: () => import("pages/admin/HomePg.vue") },
-      { path: "users", component: () => import("pages/admin/UsersPg.vue") },
+      { path: "users", component: () => import("pages/users/UsersPg.vue") },
       {
         path: "add-user",
         component: () => import("pages/admin/AddUserPg.vue"),

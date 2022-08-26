@@ -82,11 +82,18 @@
           </div>
         </div>
       </q-toolbar>
+      <q-tabs v-model="tab" inline-label class="bg-orange text-white shadow-2">
+        <q-tab
+          v-for="(menuItem, index) in menuList"
+          :key="index"
+          :icon="menuItem.icon"
+          :label="menuItem.label"
+        />
+      </q-tabs>
     </q-header>
 
     <q-drawer
       v-model="drawer"
-      show-if-above
       :width="250"
       :breakpoint="500"
       bordered
@@ -108,7 +115,6 @@
         </q-list>
       </q-scroll-area>
     </q-drawer>
-
     <q-page-container>
       <q-page padding>
         <router-view />

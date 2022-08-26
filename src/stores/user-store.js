@@ -16,7 +16,7 @@ export const useUserStore = defineStore("UserStore", {
         this.Users = data.users;
         this.TypeUser = data.type_users;
         this.Points = data.points;
-        LocalStorage.set("users", JSON.stringify(data));
+        LocalStorage.set("data", JSON.stringify(data));
       } catch (error) {
         console.log(error);
       }
