@@ -55,7 +55,7 @@ const routes = [
       { path: "users", component: () => import("pages/users/UsersPg.vue") },
       {
         path: "add-user",
-        component: () => import("pages/admin/AddUserPg.vue"),
+        component: () => import("pages/users/AddUserPg.vue"),
       },
       {
         path: "add-type-user",

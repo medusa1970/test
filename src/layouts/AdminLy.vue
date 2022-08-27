@@ -1,6 +1,6 @@
 <template>
   <q-layout container style="height: 100vh" class="shadow-2 rounded-borders">
-    <q-header elevated class="bg-blue-grey-2">
+    <q-header elevated class="bg-blue-grey-3">
       <q-toolbar class="justify-between">
         <div class="row items-center">
           <div>
@@ -110,7 +110,7 @@
     </q-drawer>
 
     <q-page-container>
-      <q-page padding>
+      <q-page>
         <router-view />
       </q-page>
     </q-page-container>
