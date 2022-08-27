@@ -16,17 +16,15 @@
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="data">
-          <addUserForm />
+          <user-data-add />
         </q-tab-panel>
 
         <q-tab-panel name="access">
-          <div class="text-h6">Alarms</div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <user-access-add />
         </q-tab-panel>
 
         <q-tab-panel name="role">
-          <div class="text-h6">Alarms</div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <UserRoleAdd />
         </q-tab-panel>
 
         <q-tab-panel name="observations">
@@ -44,11 +42,13 @@
 </template>
 <script>
 import { ref, defineComponent } from "vue";
-import addUserForm from "src/components/users/AddUserForm.vue";
+import UserDataAdd from "src/components/users/UserDataAdd.vue";
+import UserAccessAdd from "src/components/users/UserAccessAdd.vue";
+import UserRoleAdd from "src/components/users/UserRoleAdd.vue";
 
 export default defineComponent({
   name: "AddUserPg",
-  components: { addUserForm },
+  components: { UserDataAdd, UserAccessAdd, UserRoleAdd },
   setup() {
     return {
       tab: ref("data"),

@@ -61,55 +61,6 @@
             (val) => val.length < 51 || 'Máximo 50 caracteres',
           ]"
         />
-        <q-input
-          filled
-          v-model="email"
-          type="email"
-          label="Tu email *"
-          hint="Mínimo 5, Máximo 30 caracteres"
-          lazy-rules
-          :rules="[
-            (val) => (val && val.length > 4) || 'Mínimo 6 caracteres',
-            (val) => val.length < 31 || 'Máximo 50 caracteres',
-          ]"
-        />
-
-        <q-input
-          filled
-          v-model="username"
-          label="Nombre de usuario *"
-          hint="Mínimo 5, Máximo 20 caracteres"
-          lazy-rules
-          :rules="[
-            (val) =>
-              (val && val.length > 4) ||
-              'Ingresa tu usuario o email, Mínimo 5 caracteres',
-            (val) =>
-              val.length < 21 ||
-              'Ingresa tu usuario o email, Máximo 20 caracteres',
-          ]"
-        />
-
-        <q-input
-          v-model="password"
-          filled
-          :type="isPwd ? 'password' : 'text'"
-          hint="Mínimo 6, Máximo 20 caracteres"
-          label="Password *"
-          lazy-rules
-          :rules="[
-            (val) => (val && val.length > 5) || 'Mínimo 6 caracteres',
-            (val) => val.length < 21 || 'Máximo 20 caracteres',
-          ]"
-        >
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
-            />
-          </template>
-        </q-input>
 
         <div>
           <q-btn label="Agregar" type="submit" color="amber-10" />
@@ -120,66 +71,31 @@
   </div>
 </template>
 <script>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "stores/auth-store";
 import { useUserStore } from "stores/user-store";
-
 import { api } from "boot/axios";
 
 export default {
   name: "AddUser",
-  props: {
-    title: {
-      type: String,
-      default: "Agregar usuario",
-    },
-  },
   setup() {
     const $q = useQuasar();
     const router = useRouter();
-    const authStore = useAuthStore();
     const userStore = useUserStore();
-    const first_name = ref("");
-    const last_name = ref("");
-    const doc_id = ref("");
-    const phone = ref("");
-    const address = ref("");
-    const email = ref("");
-    const username = ref("");
-    const password = ref("");
-    const typeUser = ref("jaime");
 
     return {
-      first_name,
-      last_name,
-      doc_id,
-      phone,
-      address,
-      email,
-      username,
-      password,
-      isPwd: ref(true),
-      authStore,
-      userStore,
+      first_name: ref(""),
+      last_name: ref(""),
+      doc_id: ref(""),
+      phone: ref(""),
+      address: ref(""),
       router,
       $q,
-      typeUser,
-      Points: ref(""),
+      userStore,
 
       async onSubmit() {
         try {
-          const { data } = await api.post("/api/auth/signup", {
-            first_name: first_name.value,
-            last_name: last_name.value,
-            doc_id: doc_id.value,
-            phone: phone.value,
-            address: address.value,
-            email: email.value,
-            username: username.value,
-            password: password.value,
-          });
           $q.dialog({
             title: "OK",
             message: "Te has registrado correctamente",
@@ -202,9 +118,6 @@ export default {
         doc_id.value = "";
         phone.value = "";
         address.value = "";
-        email.value = "";
-        username.value = "";
-        password.value = "";
       },
 
       myFunction(data) {
