@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-table
       title="Usuarios"
-      :rows="rows"
+      :rows="userStore.Users"
       :columns="columns"
       no-data-label="No existen datos para mostrar"
       row-key="id"
@@ -19,7 +19,7 @@
       <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="q-ma-none">
           <q-btn icon="edit" color="primary" flat round @click="myedit(props.row)" />
-          <q-btn icon="delete" color="red" flat round @click="mydelete(props.row._id)" />
+          <q-btn icon="delete" color="red" flat round @click="mydelete(props.row)" />
         </q-td>
       </template>
       <template></template>
@@ -31,7 +31,7 @@
 import { ref, defineComponent, onMounted } from "vue";
 import { useUserStore } from "stores/user-store";
 import { useRouter } from "vue-router";
-import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 
 const columns = [
   {
@@ -77,13 +77,13 @@ export default defineComponent({
   name: "UsersPg",
 
   setup() {
+    const $q = useQuasar();
     const rows = ref([]);
     const userStore = useUserStore();
     const router = useRouter();
 
     onMounted(async () => {
       await userStore.users();
-      rows.value = userStore.Users;
     });
 
     return {
@@ -93,12 +93,30 @@ export default defineComponent({
       userStore,
       router,
 
-      async myedit(row) {
-        await userStore.editUser(row._id);
+      myedit(row) {
+        userStore.editUser(row._id);
         router.push("add-user");
       },
       mydelete(row) {
-        //console.log(row);
+        $q.dialog({
+          title: "Confirm",
+          message: `${row.first_name.toUpperCase()} ${row.last_name.toUpperCase()} sera eliminada, esta seguro?`,
+          cancel: true,
+          persistent: true,
+        })
+          .onOk(() => {
+            userStore.deleteUser(row._id);
+            router.push("users");
+          })
+          .onOk(() => {
+            // console.log('>>>> second OK catcher')
+          })
+          .onCancel(() => {
+            // console.log('>>>> Cancel')
+          })
+          .onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          });
       },
     };
   },

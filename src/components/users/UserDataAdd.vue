@@ -64,8 +64,6 @@
           <q-btn label="Cancelar" type="reset" color="grey-6" class="q-ml-sm" />
         </div>
       </q-form>
-      {{ userStore.newUser }}
-      <h6>hola</h6>
     </div>
   </div>
 </template>

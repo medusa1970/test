@@ -74,8 +74,6 @@
           <q-btn label="Reset" type="reset" color="black" class="q-ml-sm" />
         </div>
       </q-form>
-
-      {{ userStore.newUser }}
     </div>
   </div>
 </template>
@@ -92,9 +90,9 @@ export default {
     const $q = useQuasar();
     const router = useRouter();
     const userStore = useUserStore();
-    const email = userStore.newUser.email || ref("");
-    const username = userStore.newUser.username || ref("");
-    const password = userStore.newUser.password || ref("");
+    const email = ref(userStore.newUser.email) || ref("");
+    const username = ref(userStore.newUser.username) || ref("");
+    const password = ref("");
     const match_password = ref("");
 
     return {
@@ -150,10 +148,6 @@ export default {
         doc_id.value = "";
         phone.value = "";
         address.value = "";
-      },
-
-      myFunction(data) {
-        console.log(data);
       },
     };
   },
