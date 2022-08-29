@@ -24,7 +24,7 @@
         </q-tab-panel>
 
         <q-tab-panel name="role">
-          <UserRoleAdd />
+          <user-role-add />
         </q-tab-panel>
 
         <q-tab-panel name="observations">

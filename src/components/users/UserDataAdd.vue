@@ -9,8 +9,7 @@
           hint="Mínimo 3, Máximo 30 caracteres"
           lazy-rules
           :rules="[
-            (val) =>
-              (val && val.length > 2) || 'Nombre(s), Mínimo 3 caracteres',
+            (val) => (val && val.length > 2) || 'Nombre(s), Mínimo 3 caracteres',
             (val) => val.length < 31 || 'Nombre(s), Máximo 30 caracteres',
           ]"
         />
@@ -44,10 +43,8 @@
           hint="Mínimo 7, Máximo 8 dígitos"
           lazy-rules
           :rules="[
-            (val) =>
-              (val !== null && val !== '') || 'Ingrese un número de teléfono',
-            (val) =>
-              (val > 20000000 && val < 89999999) || 'Ingrese un número válido',
+            (val) => (val !== null && val !== '') || 'Ingrese un número de teléfono',
+            (val) => (val > 20000000 && val < 89999999) || 'Ingrese un número válido',
           ]"
         />
         <q-input
@@ -63,10 +60,11 @@
         />
 
         <div>
-          <q-btn label="Agregar" type="submit" color="amber-10" />
-          <q-btn label="Reset" type="reset" color="black" class="q-ml-sm" />
+          <q-btn label="Guardar" type="submit" color="orange" />
+          <q-btn label="Cancelar" type="reset" color="grey-6" class="q-ml-sm" />
         </div>
       </q-form>
+      {{ userStore.newUser }}
     </div>
   </div>
 </template>
@@ -78,37 +76,46 @@ import { useUserStore } from "stores/user-store";
 import { api } from "boot/axios";
 
 export default {
-  name: "AddUser",
+  name: "UserDataAdd",
   setup() {
     const $q = useQuasar();
     const router = useRouter();
     const userStore = useUserStore();
+    const first_name = userStore.newUser.first_name || ref("");
+    const last_name = userStore.newUser.last_name || ref("");
+    const doc_id = userStore.newUser.doc_id || ref("");
+    const phone = userStore.newUser.phone || ref("");
+    const address = userStore.newUser.address || ref("");
 
     return {
-      first_name: ref(""),
-      last_name: ref(""),
-      doc_id: ref(""),
-      phone: ref(""),
-      address: ref(""),
+      first_name,
+      last_name,
+      doc_id,
+      phone,
+      address,
       router,
       $q,
       userStore,
 
       async onSubmit() {
         try {
+          const { data } = await api.post("/api/user", {
+            first_name: first_name.value,
+            last_name: last_name.value,
+            doc_id: doc_id.value,
+            phone: phone.value,
+            address: address.value,
+          });
+          userStore.addUser(data.user);
           $q.dialog({
             title: "OK",
-            message: "Te has registrado correctamente",
-          }).onOk(() => {
-            router.push("/");
-          });
+            message: `${data.user.first_name} ${data.user.last_name} se agrego correctamente`,
+          }).onOk(() => {});
         } catch (error) {
           $q.dialog({
             title: "ERROR",
             message: error.message,
-          }).onOk(() => {
-            router.push("/signup");
-          });
+          }).onOk(() => {});
         }
       },
 

@@ -4,9 +4,10 @@ import { LocalStorage } from "quasar";
 
 export const useUserStore = defineStore("UserStore", {
   state: () => ({
-    Users: null,
+    Users: [],
     TypeUser: null,
     Points: null,
+    newUser: "jaime vallejos",
   }),
 
   actions: {
@@ -20,6 +21,21 @@ export const useUserStore = defineStore("UserStore", {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    addUser(user) {
+      this.Users.push(user);
+      this.newUser = user;
+    },
+    putUser(email, username, password) {
+      this.newUser.email = email;
+      this.newUser.username = username;
+      this.newUser.password = password;
+    },
+
+    editUser(id) {
+      const data = this.Users.find((user) => user._id === id);
+      this.newUser = JSON.stringify(data);
     },
   },
 });

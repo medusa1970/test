@@ -1,13 +1,64 @@
 <template>
-  <div>
-    <selAdd
-      v-model="typeUser"
-      v-bind:model="'typeUser'"
-      v-bind:label="'Tipo de usuario'"
-      v-bind:noData="'Sin tipos de usuario, agregue uno'"
-      v-bind:Icon="'people_alt'"
-      @myDialog="myFunction"
-    />
+  <div class="row justify-center">
+    <div class="col-xs-10 col-sm-6 col-md-5 col-lg-5 col-xl-2 q-gutter-y-md q-mt-xs">
+      <h6 class="q-ma-none">
+        {{ userStore.newUser.first_name }} {{ userStore.newUser.last_name }}
+      </h6>
+
+      <seladdSin
+        v-model="position"
+        v-bind:model="'position'"
+        v-bind:label="'Cargo del usuario'"
+        v-bind:noData="'Sin datos, agregue uno'"
+        v-bind:Icon="'assignment_ind'"
+        @myDialog="myFunction"
+      />
+      <seladdSin
+        v-model="area"
+        v-bind:model="'area'"
+        v-bind:label="'Area de trabajo'"
+        v-bind:noData="'Sin datos, agregue uno'"
+        v-bind:Icon="'dashboard'"
+        @myDialog="myFunction"
+      />
+      <q-card>
+        <q-card-section class="bg-grey-7 q-pa-xs">
+          <seladdMul
+            v-model="Accesos"
+            v-bind:model="'Access'"
+            v-bind:label="'Accesos'"
+            v-bind:noData="'Sin datos, agregue uno'"
+            v-bind:Icon="'mediation'"
+            @myDialog="myFunction"
+          />
+        </q-card-section>
+        <q-separator />
+        <q-card-section class="bg-grey-3 q-pa-xs">
+          <seladdMul
+            v-model="ruta"
+            v-bind:model="'routes'"
+            v-bind:label="'Rutas'"
+            v-bind:noData="'Sin datos, agregue uno'"
+            v-bind:Icon="'turn_right'"
+            @myDialog="myFunction"
+          />
+        </q-card-section>
+        <q-card-section class="bg-grey-3 q-pa-xs">
+          <seladdMul
+            v-model="ruta"
+            v-bind:model="'routes'"
+            v-bind:label="'Rutas'"
+            v-bind:noData="'Sin datos, agregue uno'"
+            v-bind:Icon="'turn_right'"
+            @myDialog="myFunction"
+          />
+        </q-card-section>
+      </q-card>
+      <div>
+        <q-btn label="Guardar" type="submit" color="orange" />
+        <q-btn label="Cancelar" type="reset" color="grey-6" class="q-ml-sm" />
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -15,20 +66,25 @@ import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { api } from "boot/axios";
-import selAdd from "components/users/seladdCmp.vue";
+import seladdSin from "src/components/users/seladdSin.vue";
+import seladdMul from "src/components/users/seladdMul.vue";
+import { useUserStore } from "stores/user-store";
 
 export default {
   name: "UserRoleAdd",
   components: {
-    selAdd,
+    seladdSin,
+    seladdMul,
   },
   setup() {
     const $q = useQuasar();
     const router = useRouter();
+    const userStore = useUserStore();
 
     return {
       router,
       $q,
+      userStore,
 
       async onSubmit() {
         try {

@@ -9,13 +9,7 @@
       :filter="filter"
     >
       <template v-slot:top-right>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Search"
-        >
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -24,20 +18,8 @@
       </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="q-ma-none">
-          <q-btn
-            icon="edit"
-            color="primary"
-            flat
-            round
-            @click="myedit(props.row)"
-          />
-          <q-btn
-            icon="delete"
-            color="red"
-            flat
-            round
-            @click="mydelete(props.row._id)"
-          />
+          <q-btn icon="edit" color="primary" flat round @click="myedit(props.row)" />
+          <q-btn icon="delete" color="red" flat round @click="mydelete(props.row._id)" />
         </q-td>
       </template>
       <template></template>
@@ -110,11 +92,13 @@ export default defineComponent({
       rows,
       userStore,
       router,
+
       myedit(row) {
-        router.push("/admin/" + row._id);
+        userStore.editUser(row._id);
+        router.push("add-user");
       },
       mydelete(row) {
-        console.log(row);
+        //console.log(row);
       },
     };
   },

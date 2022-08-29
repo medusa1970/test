@@ -165,7 +165,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "stores/auth-store";
 import { useUserStore } from "stores/user-store";
 
-import selAdd from "components/users/seladdCmp.vue";
+import selAdd from "src/components/users/seladdSin.vue";
 import { api } from "boot/axios";
 
 export default {

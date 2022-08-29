@@ -5,9 +5,10 @@
   <q-select
     v-model="myValue"
     filled
+    multiple
     :options="data"
     :label="label"
-    bg-color="amber-3"
+    bg-color="white"
   >
     <template v-slot:append>
       <q-icon :name="Icon" />
@@ -25,18 +26,10 @@
       </q-item>
     </template>
   </q-select>
-
-  <!--   <selAddDialog
-    v-if="myComp == 'type'"
-    v-model="dialog"
-    @cancelEvent="dialog = false"
-  />
- -->
 </template>
 <script>
 import { ref, defineComponent, watch } from "vue";
 import { useUserStore } from "stores/user-store";
-import selAddDialog from "components/users/seladd-dialog.vue";
 
 export default defineComponent({
   name: "sel-add",
@@ -64,16 +57,9 @@ export default defineComponent({
       type: String,
     },
   },
-  components: {
-    selAddDialog,
-  },
-
   setup() {
     const userStore = useUserStore();
     const myValue = ref("");
-    watch(myValue, async (val) => {
-      // emitir valor de un select a padre
-    });
 
     return {
       userStore,
