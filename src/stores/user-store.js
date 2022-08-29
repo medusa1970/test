@@ -7,7 +7,7 @@ export const useUserStore = defineStore("UserStore", {
     Users: [],
     TypeUser: null,
     Points: null,
-    newUser: "jaime vallejos",
+    newUser: [],
   }),
 
   actions: {
@@ -35,7 +35,7 @@ export const useUserStore = defineStore("UserStore", {
 
     editUser(id) {
       const data = this.Users.find((user) => user._id === id);
-      this.newUser = JSON.stringify(data);
+      this.newUser = data;
     },
   },
 });

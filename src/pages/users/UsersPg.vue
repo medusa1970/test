@@ -93,8 +93,8 @@ export default defineComponent({
       userStore,
       router,
 
-      myedit(row) {
-        userStore.editUser(row._id);
+      async myedit(row) {
+        await userStore.editUser(row._id);
         router.push("add-user");
       },
       mydelete(row) {

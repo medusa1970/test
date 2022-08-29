@@ -65,6 +65,7 @@
         </div>
       </q-form>
       {{ userStore.newUser }}
+      <h6>hola</h6>
     </div>
   </div>
 </template>
@@ -77,15 +78,17 @@ import { api } from "boot/axios";
 
 export default {
   name: "UserDataAdd",
+
   setup() {
     const $q = useQuasar();
     const router = useRouter();
     const userStore = useUserStore();
-    const first_name = userStore.newUser.first_name || ref("");
-    const last_name = userStore.newUser.last_name || ref("");
-    const doc_id = userStore.newUser.doc_id || ref("");
-    const phone = userStore.newUser.phone || ref("");
-    const address = userStore.newUser.address || ref("");
+
+    const first_name = ref(userStore.newUser.first_name) || ref("");
+    const last_name = ref(userStore.newUser.last_name) || ref("");
+    const doc_id = ref(userStore.newUser.doc_id) || ref("");
+    const phone = ref(userStore.newUser.phone) || ref("");
+    const address = ref(userStore.newUser.address) || ref("");
 
     return {
       first_name,
