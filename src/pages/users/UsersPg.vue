@@ -14,6 +14,7 @@
             <q-icon name="search" />
           </template>
         </q-input>
+        <!-- BOTON PARA AGREGAR NUEVO USUARIO  -->
         <q-btn icon="add" color="primary" to="add-user" class="q-ml-lg" />
       </template>
       <template v-slot:body-cell-actions="props">
@@ -95,7 +96,7 @@ export default defineComponent({
 
       myedit(row) {
         userStore.editUser(row._id);
-        router.push("add-user");
+        router.push("edit-user");
       },
       mydelete(row) {
         $q.dialog({

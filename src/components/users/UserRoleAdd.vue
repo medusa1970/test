@@ -4,13 +4,19 @@
       <h6 class="q-ma-none">
         {{ userStore.newUser.first_name }} {{ userStore.newUser.last_name }}
       </h6>
-
+      {{ position }}
       <seladdSin
         v-model="position"
-        v-bind:model="'position'"
-        v-bind:label="'Cargo del usuario'"
+        v-bind:model="'name'"
+        v-bind:label="'Cargo del colaborador'"
         v-bind:noData="'Sin datos, agregue uno'"
         v-bind:Icon="'assignment_ind'"
+        v-bind:data="
+          userStore.positions.map((item) => ({
+            label: item.name,
+            value: item._id,
+          }))
+        "
         @myDialog="myFunction"
       />
       <seladdSin
@@ -60,31 +66,40 @@
       </div>
     </div>
   </div>
+  <dialog-add-position
+    v-model="addPos"
+    @cancelEvent="addPos = 'false'"
+    @add-position="addPosition"
+  />
 </template>
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
-import { api } from "boot/axios";
 import seladdSin from "src/components/users/seladdSin.vue";
 import seladdMul from "src/components/users/seladdMul.vue";
 import { useUserStore } from "stores/user-store";
+import DialogAddPosition from "src/components/users/DialogAddPosition.vue";
 
 export default {
   name: "UserRoleAdd",
   components: {
     seladdSin,
     seladdMul,
+    DialogAddPosition,
   },
   setup() {
     const $q = useQuasar();
     const router = useRouter();
     const userStore = useUserStore();
-
+    const addPos = ref(false);
+    const position = ref("");
     return {
       router,
       $q,
       userStore,
+      addPos,
+      position,
 
       async onSubmit() {
         try {
@@ -107,7 +122,12 @@ export default {
       onReset() {},
 
       myFunction(data) {
-        console.log(data);
+        addPos.value = true;
+      },
+
+      addPosition(data) {
+        userStore.addPosition(data.name, data.abbreviation, data.description);
+        addPos.value = false;
       },
     };
   },

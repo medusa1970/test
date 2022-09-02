@@ -16,7 +16,7 @@
     <template v-slot:hint> Field hint </template>
 
     <template v-slot:after>
-      <q-btn round color="green-14" icon="add" @click="dialog = true" />
+      <q-btn round color="green-14" icon="add" @click="$emit('myDialog', model)" />
     </template>
     <template v-slot:no-option>
       <q-item>

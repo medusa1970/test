@@ -58,6 +58,10 @@ const routes = [
         component: () => import("pages/users/AddUserPg.vue"),
       },
       {
+        path: "edit-user",
+        component: () => import("pages/users/EditUserPg.vue"),
+      },
+      {
         path: "add-type-user",
         component: () => import("pages/admin/AddTypeUserPg.vue"),
       },

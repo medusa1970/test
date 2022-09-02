@@ -20,7 +20,7 @@
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="data">
-          <user-data-add />
+          <user-data-put />
         </q-tab-panel>
 
         <q-tab-panel name="role">
@@ -41,19 +41,29 @@
   </div>
 </template>
 <script>
-import { ref, defineComponent } from "vue";
-import UserDataAdd from "src/components/users/UserDataAdd.vue";
+import { ref, defineComponent, onMounted } from "vue";
+import UserDataPut from "src/components/users/UserDataPut.vue";
 import UserRoleAdd from "src/components/users/UserRoleAdd.vue";
 import { useUserStore } from "stores/user-store";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "AddUserPg",
-  components: { UserDataAdd, UserRoleAdd },
+  components: { UserDataPut, UserRoleAdd },
   setup() {
     const userStore = useUserStore();
+    const router = useRouter();
+
+    onMounted(() => {
+      if (Object.keys(userStore.newUser).length === 0) {
+        router.push("/admin/users");
+      }
+    });
+
     return {
       tab: ref("data"),
       userStore,
+      router,
     };
   },
 });

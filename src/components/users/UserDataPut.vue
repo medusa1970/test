@@ -4,6 +4,7 @@
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-lg q-mt-md">
         <q-input
           filled
+          disable
           v-model="first_name"
           label="Nombre completo *"
           hint="Mínimo 3, Máximo 30 caracteres"
@@ -15,6 +16,7 @@
         />
         <q-input
           filled
+          disable
           v-model="last_name"
           label="Apellido completo *"
           hint="Mínimo 3, Máximo 30 caracteres"
@@ -26,6 +28,7 @@
         />
         <q-input
           filled
+          disable
           v-model="doc_id"
           label="Documento de identificación *"
           hint="Mínimo 5, Máximo 12 caracteres"
@@ -60,8 +63,11 @@
         />
         <q-separator />
 
+        <!-- input disabled -->
+
         <q-input
           filled
+          disable
           v-model="email"
           type="email"
           label="Tu email *"
@@ -77,6 +83,7 @@
 
         <q-input
           filled
+          disable
           v-model="username"
           label="Nombre de usuario *"
           hint="Mínimo 5, Máximo 20 caracteres"
@@ -87,43 +94,6 @@
             (val) => val.length < 21 || 'Máximo 20 caracteres',
           ]"
         />
-        <q-input
-          v-model="password"
-          bg-color="amber-2"
-          filled
-          :type="isPwd ? 'password' : 'text'"
-          label="Password *"
-          lazy-rules
-          :rules="[
-            (val) => (val && val.length > 5) || 'Mínimo 6 caracteres',
-            (val) => val.length < 21 || 'Máximo 20 caracteres',
-          ]"
-        >
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
-            />
-          </template>
-        </q-input>
-
-        <q-input
-          v-model="match_password"
-          bg-color="amber-2"
-          class="q-mt-none"
-          type="password"
-          filled
-          hint="Minimo 6, Maximo 20 caracteres"
-          label="Repite el password *"
-          lazy-rules
-          :rules="[
-            (val) => (val && val.length > 5) || 'Minimo 6 caracteres',
-            (val) => val.length < 21 || 'Maximo 20 caracteres',
-            (val) => val == password || 'Los passwords no coinciden',
-          ]"
-        >
-        </q-input>
 
         <div>
           <q-btn label="Guardar" type="submit" color="orange" />
