@@ -1,7 +1,4 @@
 <template>
-  <!-- como emitir valor de un select
- -->
-
   <q-select
     v-model="myValue"
     filled
@@ -29,7 +26,6 @@
 </template>
 <script>
 import { ref, defineComponent, watch } from "vue";
-import { useUserStore } from "stores/user-store";
 
 export default defineComponent({
   name: "sel-add",
@@ -50,20 +46,11 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    myComp: {
-      type: String,
-    },
-    typeUser: {
-      type: String,
-    },
   },
   setup() {
-    const userStore = useUserStore();
-    const myValue = ref("");
+    const myValue = ref(null);
 
     return {
-      userStore,
-      selValue: ref(null),
       dialog: ref(false),
       myValue,
     };

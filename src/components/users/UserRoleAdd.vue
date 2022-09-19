@@ -4,37 +4,56 @@
       <h6 class="q-ma-none">
         {{ userStore.newUser.first_name }} {{ userStore.newUser.last_name }}
       </h6>
-      {{ position }}
       <seladdSin
-        v-model="position"
-        v-bind:model="'name'"
-        v-bind:label="'Cargo del colaborador'"
+        v-model="type"
+        v-bind:model="'type'"
+        v-bind:label="'Tipo de usuario'"
         v-bind:noData="'Sin datos, agregue uno'"
-        v-bind:Icon="'assignment_ind'"
-        v-bind:data="
-          userStore.positions.map((item) => ({
-            label: item.name,
-            value: item._id,
-          }))
-        "
-        @myDialog="myFunction"
+        v-bind:Icon="'supervisor_account'"
+        v-bind:data="userStore.Type"
+        @myDialog="addType = true"
       />
       <seladdSin
+        v-if="type.label === 'colaborador de punto'"
+        v-model="point"
+        v-bind:model="'point'"
+        v-bind:label="'Punto de trabajo'"
+        v-bind:noData="'Sin datos, agregue uno'"
+        v-bind:Icon="'storefront'"
+        v-bind:data="userStore.Points"
+        @myDialog="addPoint = true"
+      />
+      <seladdSin
+        v-if="type"
         v-model="area"
         v-bind:model="'area'"
         v-bind:label="'Area de trabajo'"
         v-bind:noData="'Sin datos, agregue uno'"
         v-bind:Icon="'dashboard'"
-        @myDialog="myFunction"
+        v-bind:data="userStore.Area"
+        @myDialog="addArea = true"
       />
-      <q-card>
+
+      <seladdSin
+        v-if="area"
+        v-model="position"
+        v-bind:model="'position'"
+        v-bind:label="'Cargo'"
+        v-bind:noData="'Sin datos, agregue uno'"
+        v-bind:Icon="'groups'"
+        v-bind:data="userStore.Position"
+        @myDialog="addArea = true"
+      />
+
+      <q-card v-if="area">
         <q-card-section class="bg-grey-7 q-pa-xs">
           <seladdMul
-            v-model="Accesos"
-            v-bind:model="'Access'"
+            v-model="access"
+            v-bind:model="'access'"
             v-bind:label="'Accesos'"
             v-bind:noData="'Sin datos, agregue uno'"
             v-bind:Icon="'mediation'"
+            v-bind:data="userStore.Access"
             @myDialog="myFunction"
           />
         </q-card-section>
@@ -66,6 +85,34 @@
       </div>
     </div>
   </div>
+  Tipo: {{ type }} <br />
+  Punto: {{ point }} <br />
+  Area: {{ area }} <br />
+  Cargo: {{ position }} <br />
+  Accesos: {{ access }} <br />
+  <br />
+  <br />
+  Areas: {{ userStore.AreaTmp }}
+  <br />
+  Cargos: {{ userStore.PositionTmp }}
+  <br />
+  Accesos: {{ userStore.AccessTmp }}
+
+  <dialog-add-type
+    v-model="addType"
+    @cancelEvent="addType = 'false'"
+    @add-type="addTypeFn"
+  />
+  <dialog-add-point
+    v-model="addPoint"
+    @cancelEvent="addPoint = 'false'"
+    @add-point="addPointFn"
+  />
+  <dialog-add-area
+    v-model="addArea"
+    @cancelEvent="addArea = 'false'"
+    @add-area="addAreaFn"
+  />
   <dialog-add-position
     v-model="addPos"
     @cancelEvent="addPos = 'false'"
@@ -73,34 +120,65 @@
   />
 </template>
 <script>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import seladdSin from "src/components/users/seladdSin.vue";
 import seladdMul from "src/components/users/seladdMul.vue";
 import { useUserStore } from "stores/user-store";
+import DialogAddType from "src/components/users/DialogAddType.vue";
+import DialogAddPoint from "src/components/users/DialogAddPoint.vue";
 import DialogAddPosition from "src/components/users/DialogAddPosition.vue";
+import DialogAddArea from "src/components/users/DialogAddArea.vue";
 
 export default {
   name: "UserRoleAdd",
   components: {
     seladdSin,
     seladdMul,
+    DialogAddType,
+    DialogAddPoint,
     DialogAddPosition,
+    DialogAddArea,
   },
+
   setup() {
     const $q = useQuasar();
     const router = useRouter();
     const userStore = useUserStore();
+    const addType = ref(false);
+    const addPoint = ref(false);
     const addPos = ref(false);
+    const addArea = ref(false);
     const position = ref("");
+    const type = ref("");
+    const point = ref("");
+    const area = ref("");
+    const access = ref(null);
+
+    watch(type, (data) => {
+      userStore.selectAreas(data.value); //captura id del tipo de usuario
+    });
+
+    watch(area, (data) => {
+      userStore.selectPositionsAccess(data.value); //captura id del tipo de usuario
+    });
+
     return {
       router,
       $q,
       userStore,
+      addType,
+      addPoint,
       addPos,
+      addArea,
       position,
+      type,
+      point,
+      area,
+      access,
 
+      options: ["Google", "Facebook", "Twitter", "Apple", "Oracle"],
       async onSubmit() {
         try {
           $q.dialog({
@@ -119,15 +197,23 @@ export default {
         }
       },
 
-      onReset() {},
+      addTypeFn(data) {
+        userStore.addType(data.name, data.abbreviation, data.description, data.icon);
+        addType.value = false;
+      },
 
-      myFunction(data) {
-        addPos.value = true;
+      addPointFn(data) {
+        userStore.addPoint(data.name, data.abbreviation, data.address, data.phone);
+        addPoint.value = false;
       },
 
       addPosition(data) {
         userStore.addPosition(data.name, data.abbreviation, data.description);
         addPos.value = false;
+      },
+
+      addAreaFn(data) {
+        console.log(data);
       },
     };
   },

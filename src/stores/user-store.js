@@ -5,10 +5,16 @@ import { LocalStorage } from "quasar";
 export const useUserStore = defineStore("UserStore", {
   state: () => ({
     Users: [],
-    TypeUser: null,
-    Points: null,
+    Roles: [],
+    Type: [],
+    Area: [],
+    AreaTmp: [],
+    Position: [],
+    PositionTmp: [],
+    Access: [],
+    AccessTmp: [],
+    Points: [],
     newUser: [],
-    positions: [],
   }),
 
   actions: {
@@ -16,9 +22,21 @@ export const useUserStore = defineStore("UserStore", {
       try {
         const { data } = await api.get("api/user");
         this.Users = data.users;
-        this.TypeUser = data.type_users;
-        this.Points = data.points;
-        this.positions = data.positions;
+        this.Roles = data.roles;
+        const dataType = this.Roles.map((item) => ({
+          label: item.type.name,
+          icon: item.type.icon,
+          value: item._id,
+        }));
+        this.Type = dataType;
+
+        const dataPoints = data.points.map((item) => ({
+          label: item.name,
+          value: item._id,
+          icon: "location_on",
+        }));
+        this.Points = dataPoints;
+
         this.newUser = [];
         LocalStorage.set("data", JSON.stringify(data));
       } catch (error) {
@@ -53,17 +71,75 @@ export const useUserStore = defineStore("UserStore", {
       }
     },
 
-    async addPosition(name, abbreviation, description) {
+    async addType(name, abbreviation, description, icon) {
       try {
-        const { data } = await api.post("/api/user/position", {
-          name,
-          abbreviation,
-          description,
+        const { data } = await api.post("/api/user/role", {
+          type: {
+            name,
+            abbreviation,
+            description,
+            icon,
+          },
         });
-        this.positions = data.positions;
+        this.Roles = data.roles;
+        const dataType = this.Roles.map((item) => ({
+          label: item.type.name,
+          icon: item.type.icon,
+          value: item._id,
+        }));
+        this.Type = dataType;
       } catch (error) {
         console.log(error);
       }
+    },
+
+    async addPoint(name, abbreviation, address, phone) {
+      try {
+        const { data } = await api.post("/api/point", {
+          name,
+          abbreviation,
+          address,
+          phone,
+        });
+        // push new point to array
+        this.Points.push({
+          label: data.point.name,
+          value: data.point._id,
+          icon: "location_on",
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async selectAreas(id) {
+      this.AreaTmp = this.Roles.find((role) => role._id === id).area;
+      this.Area = this.AreaTmp.map((item) => ({
+        label: item.name,
+        value: item._id,
+        icon: item.icon,
+      }));
+    },
+
+    async selectPositionsAccess(id) {
+      this.PositionTmp = this.AreaTmp.find((area) => area._id === id).position;
+      this.Position = this.PositionTmp.map((item) => ({
+        label: item.name,
+        value: item._id,
+        icon: item.icon,
+      }));
+
+      this.AccessTmp = this.AreaTmp.find((area) => area._id === id).access;
+      this.Access = this.AccessTmp.map((item) => ({
+        label: item.name,
+        value: item._id,
+        icon: "swap_horiz",
+      }));
+    },
+
+    async addArea(name, abbreviation, description, icon) {
+      try {
+      } catch (error) {}
     },
   },
 });
