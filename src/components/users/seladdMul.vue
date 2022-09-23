@@ -2,11 +2,26 @@
   <q-select
     v-model="myValue"
     filled
-    multiple
     :options="data"
     :label="label"
     bg-color="white"
+    multiple
+    emit-value
+    map-options
+    stack-label
   >
+    <template v-slot:option="{ itemProps, opt }">
+      <q-item v-bind="itemProps">
+        <q-item-section avatar>
+          <q-icon :name="opt.icon" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ opt.label }}</q-item-label>
+          <q-item-label caption>{{ opt.description }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </template>
+
     <template v-slot:append>
       <q-icon :name="Icon" />
     </template>
@@ -25,7 +40,7 @@
   </q-select>
 </template>
 <script>
-import { ref, defineComponent, watch } from "vue";
+import { ref, defineComponent } from "vue";
 
 export default defineComponent({
   name: "sel-add",
@@ -47,12 +62,10 @@ export default defineComponent({
       default: () => [],
     },
   },
-  setup() {
-    const myValue = ref(null);
 
+  setup() {
     return {
-      dialog: ref(false),
-      myValue,
+      myValue: ref([]),
     };
   },
 });

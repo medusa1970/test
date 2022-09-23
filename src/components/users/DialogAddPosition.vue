@@ -14,7 +14,7 @@
           <q-input
             filled
             v-model="name"
-            label="Cargo del colaborador *"
+            label="Nombre de la nueva Area de Trabajo *"
             hint="Mínimo 3, Máximo 30 caracteres"
             lazy-rules
             :rules="[
@@ -25,7 +25,7 @@
           <q-input
             filled
             v-model="abbreviation"
-            label="Abreviación del cargo *"
+            label="Abreviación del Area *"
             hint="Mínimo 2, Máximo 5 caracteres"
             lazy-rules
             :rules="[
@@ -36,11 +36,22 @@
           <q-input
             filled
             v-model="description"
-            label="Descripción del cargo *"
+            label="Descripción del Area de Trabajo *"
             hint="Mínimo 10, Máximo 50 caracteres"
             lazy-rules
             :rules="[
-              (val) => (val && val.length > 1) || 'Mínimo 11 caracteres',
+              (val) => (val && val.length > 9) || 'Mínimo 11 caracteres',
+              (val) => val.length < 51 || 'Máximo 50 caracteres',
+            ]"
+          />
+          <q-input
+            filled
+            v-model="icon"
+            label="Nombre del icono (material icons) *"
+            hint="Mínimo 3, Máximo 50 caracteres"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 2) || 'Mínimo 11 caracteres',
               (val) => val.length < 51 || 'Máximo 50 caracteres',
             ]"
           />
@@ -57,7 +68,7 @@
             label="Cancelar"
             type="reset"
             glossy
-            @click="$emit('cancelEvent')"
+            @click="cancelEvent"
           />
           <q-btn color="grey-6" label="Reset" type="reset" glossy />
         </q-form>
@@ -72,33 +83,42 @@
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
-  name: "PositionAdd",
+  name: "DialogAddPosition",
   emits: ["cancelEvent"],
   setup(props, { emit }) {
     const name = ref("");
     const abbreviation = ref("");
     const description = ref("");
+    const icon = ref("");
+    //declare const Function onReset()
+    const onReset = () => {
+      name.value = "";
+      abbreviation.value = "";
+      description.value = "";
+      icon.value = "";
+    };
 
     return {
       name,
       abbreviation,
       description,
+      icon,
+      onReset,
 
       myFunction() {
         emit("addPosition", {
           name: name.value,
           abbreviation: abbreviation.value,
           description: description.value,
+          icon: icon.value,
         });
-        name.value = "";
-        abbreviation.value = "";
-        description.value = "";
+        onReset();
+        emit("cancelEvent");
       },
 
-      onReset() {
-        name.value = "";
-        abbreviation.value = "";
-        description.value = "";
+      cancelEvent() {
+        onReset();
+        emit("cancelEvent");
       },
     };
   },

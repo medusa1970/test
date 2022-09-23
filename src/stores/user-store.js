@@ -93,6 +93,60 @@ export const useUserStore = defineStore("UserStore", {
       }
     },
 
+    async addArea(name, abbreviation, description, icon, idType) {
+      try {
+        const { data } = await api.post("/api/user/role-area/" + idType.value, {
+          name,
+          abbreviation,
+          description,
+          icon,
+        });
+        this.Roles = data.roles;
+        this.selectAreas(idType.value);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async addPosition(name, abbreviation, description, icon, idType, idArea) {
+      try {
+        const { data } = await api.post(
+          "/api/user/role-area-position/" + idType.value + "/" + idArea.value,
+          {
+            name,
+            abbreviation,
+            description,
+            icon,
+          }
+        );
+        this.Roles = data.roles;
+        this.selectAreas(idType.value);
+        this.selectPositionsAccess(idArea.value);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async addAccess(name, abbreviation, description, icon, idType, idArea) {
+      console.log(idType.value, idArea.value);
+      try {
+        const { data } = await api.post(
+          "/api/user/role-area-access/" + idType.value + "/" + idArea.value,
+          {
+            name,
+            abbreviation,
+            description,
+            icon,
+          }
+        );
+        this.Roles = data.roles;
+        this.selectAreas(idType.value);
+        this.selectPositionsAccess(idArea.value);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     async addPoint(name, abbreviation, address, phone) {
       try {
         const { data } = await api.post("/api/point", {
@@ -133,13 +187,8 @@ export const useUserStore = defineStore("UserStore", {
       this.Access = this.AccessTmp.map((item) => ({
         label: item.name,
         value: item._id,
-        icon: "swap_horiz",
+        icon: "location_on",
       }));
-    },
-
-    async addArea(name, abbreviation, description, icon) {
-      try {
-      } catch (error) {}
     },
   },
 });

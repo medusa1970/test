@@ -4,7 +4,7 @@
       <q-card-section class="row">
         <h6 class="text-h6 q-ma-none">
           <q-icon name="people_alt" color="blue-grey-8" size="1.3em" class="q-mr-xs" />
-          Area de trabajo
+          Accesos des usuario
         </h6>
       </q-card-section>
       <q-separator />
@@ -83,7 +83,7 @@
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
-  name: "DialogAddArea",
+  name: "DialogAddAccess",
   emits: ["cancelEvent"],
   setup(props, { emit }) {
     const name = ref("");
@@ -106,7 +106,7 @@ export default defineComponent({
       onReset,
 
       myFunction() {
-        emit("addArea", {
+        emit("addAccess", {
           name: name.value,
           abbreviation: abbreviation.value,
           description: description.value,
