@@ -6,9 +6,6 @@
     :label="label"
     bg-color="white"
     multiple
-    emit-value
-    map-options
-    stack-label
   >
     <template v-slot:option="{ itemProps, opt }">
       <q-item v-bind="itemProps">

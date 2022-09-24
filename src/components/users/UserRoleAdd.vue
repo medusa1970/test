@@ -51,7 +51,7 @@
           <seladdMul
             v-model="access"
             v-bind:model="'access'"
-            v-bind:label="'Accesos'"
+            v-bind:label="'Permisos / Accesos'"
             v-bind:noData="'Sin datos, agregue uno'"
             v-bind:Icon="'mediation'"
             v-bind:data="userStore.Access"
@@ -64,7 +64,7 @@
             <seladdMul
               v-model="ruta"
               v-bind:model="'routes'"
-              v-bind:label="item"
+              v-bind:label="item.label"
               v-bind:noData="'Sin datos, agregue uno'"
               v-bind:Icon="'turn_right'"
               @myDialog="myFunction"
@@ -216,6 +216,7 @@ export default {
       flagPoint,
       flagArea,
       routes,
+      modelMultiple: ref([]),
 
       async onSubmit() {
         try {

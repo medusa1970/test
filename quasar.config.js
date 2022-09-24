@@ -55,7 +55,8 @@ module.exports = configure(function (ctx) {
 
       vueRouterMode: "history", // available values: 'hash', 'history'
       env: {
-        API_URL: ctx.dev ? "http://192.168.0.133:3000/" : "",
+        //API_URL: ctx.dev ? "http://192.168.0.133:3000/" : "",
+        API_URL: ctx.dev ? "http://localhost:3000/" : "",
       },
 
       // vueRouterBase,
