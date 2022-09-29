@@ -59,17 +59,15 @@
           />
         </q-card-section>
         <q-separator />
-        <q-card-section class="bg-grey-3 q-pa-xs">
-          <div v-for="item in access" :key="item">
-            <seladdMul
-              v-model="ruta"
-              v-bind:model="'routes'"
-              v-bind:label="item.label"
-              v-bind:noData="'Sin datos, agregue uno'"
-              v-bind:Icon="'turn_right'"
-              @myDialog="myFunction"
-            />
-          </div>
+        <q-card-section class="bg-grey-3 q-pa-xs" v-for="item in access" :key="item">
+          <seladdMul
+            :v-model="item.value"
+            v-bind:model="item.value"
+            v-bind:label="item.label"
+            v-bind:noData="'Sin datos, agregue uno'"
+            v-bind:Icon="'turn_right'"
+            @myDialog="addRouteSel"
+          />
         </q-card-section>
       </q-card>
       <div>
@@ -83,8 +81,8 @@
   <pre>{{ userStore.Roles }}</pre>
   <br />
   <br /> -->
-  {{ routes }} <br />
-  Access: {{ userStore.Access }} <br /><br />
+  {{ idAccess }}
+  <br /><br />
   Tipo: {{ type }} <br />
   Punto: {{ point }} <br />
   Area: {{ area }} <br />
@@ -123,6 +121,11 @@
     @cancelEvent="addAccess = 'false'"
     @add-access="addAccessFn"
   />
+  <dialog-add-route
+    v-model="addRoute"
+    @cancelEvent="addRoute = 'false'"
+    @add-route="addRouteFn"
+  />
 </template>
 <script>
 import { ref, watch } from "vue";
@@ -136,6 +139,7 @@ import DialogAddPoint from "src/components/users/DialogAddPoint.vue";
 import DialogAddArea from "src/components/users/DialogAddArea.vue";
 import DialogAddPosition from "src/components/users/DialogAddPosition.vue";
 import DialogAddAccess from "src/components/users/DialogAddAccess.vue";
+import DialogAddRoute from "src/components/users/DialogAddRoute.vue";
 
 export default {
   name: "UserRoleAdd",
@@ -147,6 +151,7 @@ export default {
     DialogAddArea,
     DialogAddPosition,
     DialogAddAccess,
+    DialogAddRoute,
   },
 
   setup() {
@@ -158,6 +163,7 @@ export default {
     const addArea = ref(false);
     const addPosition = ref(false);
     const addAccess = ref(false);
+    const addRoute = ref(false);
     const position = ref("");
     const type = ref("");
     const point = ref("");
@@ -166,6 +172,7 @@ export default {
     const flagPoint = ref(false);
     const flagArea = ref(false);
     const routes = ref([]);
+    const idAccess = ref("");
 
     watch(type, (data) => {
       userStore.selectAreas(data.value); //captura id del tipo de usuario
@@ -206,8 +213,9 @@ export default {
       addType,
       addPoint,
       addArea,
-      addAccess,
       addPosition,
+      addAccess,
+      addRoute,
       position,
       type,
       point,
@@ -216,7 +224,7 @@ export default {
       flagPoint,
       flagArea,
       routes,
-      modelMultiple: ref([]),
+      idAccess,
 
       async onSubmit() {
         try {
@@ -279,6 +287,24 @@ export default {
           area.value
         );
         addAccess.value = false;
+      },
+
+      addRouteFn(data) {
+        console.log(addRoute.value);
+        console.log("jaime vallejos");
+        userStore.addRoute(
+          data.name,
+          data.description,
+          type.value,
+          area.value,
+          idAccess.value
+        );
+        addRoute.value = false;
+      },
+
+      addRouteSel(idAcc) {
+        idAccess.value = idAcc; //variable que guarda el id del acceso seleccionado
+        addRoute.value = true;
       },
     };
   },

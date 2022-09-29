@@ -13,6 +13,8 @@ export const useUserStore = defineStore("UserStore", {
     PositionTmp: [],
     Access: [],
     AccessTmp: [],
+    Routes: [],
+    RoutesTmp: [],
     Points: [],
     newUser: [],
   }),
@@ -147,6 +149,16 @@ export const useUserStore = defineStore("UserStore", {
       }
     },
 
+    async addRoute(name, description, idType, idArea, idAccess) {
+      console.log(
+        name,
+        description,
+        idType.value,
+        idArea.value,
+        idAccess.value.value
+      );
+    },
+
     async addPoint(name, abbreviation, address, phone) {
       try {
         const { data } = await api.post("/api/point", {
@@ -185,6 +197,17 @@ export const useUserStore = defineStore("UserStore", {
 
       this.AccessTmp = this.AreaTmp.find((area) => area._id === id).access;
       this.Access = this.AccessTmp.map((item) => ({
+        label: item.name,
+        value: item._id,
+        icon: "location_on",
+      }));
+    },
+
+    async selectRoutes(id) {
+      this.RoutesTmp = this.AccessTmp.find(
+        (access) => access._id === id
+      ).routes;
+      this.Routes = this.RoutesTmp.map((item) => ({
         label: item.name,
         value: item._id,
         icon: "location_on",
