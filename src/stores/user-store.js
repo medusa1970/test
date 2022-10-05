@@ -149,14 +149,28 @@ export const useUserStore = defineStore("UserStore", {
       }
     },
 
-    async addRoute(name, description, idType, idArea, idAccess) {
-      console.log(
-        name,
-        description,
-        idType.value,
-        idArea.value,
-        idAccess.value.value
-      );
+    async addRoute(name, route, description, idType, idArea, idAccess) {
+      console.log(idType.value, idArea.value, idAccess);
+      try {
+        const { data } = await api.post(
+          "/api/user/role-area-access-route/" +
+            idType.value +
+            "/" +
+            idArea.value +
+            "/" +
+            idAccess,
+          {
+            name,
+            route,
+            description,
+          }
+        );
+        this.Roles = data.roles;
+        this.selectAreas(idType.value);
+        this.selectPositionsAccess(idArea.value);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     async addPoint(name, abbreviation, address, phone) {
@@ -200,17 +214,7 @@ export const useUserStore = defineStore("UserStore", {
         label: item.name,
         value: item._id,
         icon: "location_on",
-      }));
-    },
-
-    async selectRoutes(id) {
-      this.RoutesTmp = this.AccessTmp.find(
-        (access) => access._id === id
-      ).routes;
-      this.Routes = this.RoutesTmp.map((item) => ({
-        label: item.name,
-        value: item._id,
-        icon: "location_on",
+        routes: item.routes,
       }));
     },
   },

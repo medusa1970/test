@@ -24,6 +24,17 @@
           />
           <q-input
             filled
+            v-model="route"
+            label="Ruta en el sistema *"
+            hint="Mínimo 3, Máximo 30 caracteres"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 2) || 'Mínimo 6 caracteres',
+              (val) => val.length < 31 || 'Máximo 30 caracteres',
+            ]"
+          />
+          <q-input
+            filled
             v-model="description"
             label="Descripción de de la acción de la ruta *"
             hint="Mínimo 10, Máximo 50 caracteres"
@@ -66,20 +77,24 @@ export default defineComponent({
   setup(props, { emit }) {
     const name = ref("");
     const description = ref("");
+    const route = ref("");
     //declare const Function onReset()
     const onReset = () => {
       name.value = "";
+      route.value = "";
       description.value = "";
     };
 
     return {
       name,
       description,
+      route,
       onReset,
 
       myFunction() {
         emit("addRoute", {
           name: name.value,
+          route: route.value,
           description: description.value,
         });
         onReset();

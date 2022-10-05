@@ -59,13 +59,24 @@
           />
         </q-card-section>
         <q-separator />
-        <q-card-section class="bg-grey-3 q-pa-xs" v-for="item in access" :key="item">
+        <q-card-section
+          class="bg-grey-3 q-pa-xs"
+          v-for="(item, index) in access"
+          :key="index"
+        >
           <seladdMul
-            :v-model="item.value"
+            v-model="routes[index]"
             v-bind:model="item.value"
             v-bind:label="item.label"
             v-bind:noData="'Sin datos, agregue uno'"
             v-bind:Icon="'turn_right'"
+            v-bind:data="
+              item.routes.map((r) => ({
+                label: r.name,
+                value: r._id,
+                icon: 'turn_right',
+              }))
+            "
             @myDialog="addRouteSel"
           />
         </q-card-section>
@@ -77,24 +88,20 @@
     </div>
   </div>
 
-  <!-- Roles:
+  Type: {{ type }}
+  <br />
+  punto: {{ point }}
+  <br />
+  Area: {{ area }}
+  <br />
+  posicion: {{ position }}
+  <br />
+  Accesos: {{ access }}
+  <br />
+  rutas: {{ routes }}
+  <br />
+  <br />
   <pre>{{ userStore.Roles }}</pre>
-  <br />
-  <br /> -->
-  {{ idAccess }}
-  <br /><br />
-  Tipo: {{ type }} <br />
-  Punto: {{ point }} <br />
-  Area: {{ area }} <br />
-  Cargo: {{ position }} <br />
-  Accesos: {{ access }} <br />
-  <br />
-  <br />
-  Areas: {{ userStore.AreaTmp }}
-  <br />
-  Cargos: {{ userStore.PositionTmp }}
-  <br />
-  Accesos: {{ userStore.AccessTmp }}
 
   <dialog-add-type
     v-model="addType"
@@ -180,7 +187,9 @@ export default {
       point.value = "";
       position.value = "";
       access.value = [];
-      if (data.label === "punto de venta") {
+      routes.value = [];
+
+      if (data.label.toLowerCase() === "punto de venta") {
         flagPoint.value = true;
         flagArea.value = false;
       } else {
@@ -196,14 +205,13 @@ export default {
     });
 
     watch(area, (data) => {
-      userStore.selectPositionsAccess(data.value); //captura id del tipo de usuario
+      userStore.selectPositionsAccess(data.value); //captura id del area
       position.value = "";
       access.value = [];
     });
 
     watch(access, (data) => {
-      routes.value = userStore.Access.filter((item) => item.value.includes(data)); /// quede aquiiiiii
-      console.log("routes", routes.value);
+      console.log("access", data);
     });
 
     return {
@@ -290,16 +298,26 @@ export default {
       },
 
       addRouteFn(data) {
-        console.log(addRoute.value);
-        console.log("jaime vallejos");
         userStore.addRoute(
           data.name,
+          data.route,
           data.description,
           type.value,
           area.value,
           idAccess.value
         );
         addRoute.value = false;
+        //push in access.routes new route
+        const newRoute = {
+          name: data.name,
+          route: data.route,
+          description: data.description,
+        };
+        access.value.map((item) => {
+          if (item.value === idAccess.value) {
+            item.routes.push(newRoute);
+          }
+        });
       },
 
       addRouteSel(idAcc) {
