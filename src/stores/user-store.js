@@ -1,20 +1,21 @@
 import { defineStore } from "pinia";
 import { api } from "boot/axios";
-import { LocalStorage } from "quasar";
+import { useQuasar } from "quasar";
 
 export const useUserStore = defineStore("UserStore", {
   state: () => ({
     Users: [],
     Roles: [],
-    Type: [],
-    Area: [],
-    AreaTmp: [],
+    rolesUser: {},
+    Types: [],
+    Areas: [],
+    AreasTmp: [],
     Position: [],
     PositionTmp: [],
     Access: [],
     AccessTmp: [],
     Routes: [],
-    RoutesTmp: [],
+    RoutesTmp: "",
     Points: [],
     newUser: [],
   }),
@@ -22,7 +23,12 @@ export const useUserStore = defineStore("UserStore", {
   actions: {
     async users() {
       try {
-        const { data } = await api.get("api/user");
+        const $q = useQuasar();
+        $q.loading.show({
+          message: "Cargando datos, un momento por favor...",
+        });
+
+        const { data } = await api.get("api/users");
         this.Users = data.users;
         this.Roles = data.roles;
         const dataType = this.Roles.map((item) => ({
@@ -30,7 +36,10 @@ export const useUserStore = defineStore("UserStore", {
           icon: item.type.icon,
           value: item._id,
         }));
-        this.Type = dataType;
+
+        $q.loading.hide();
+
+        this.Types = dataType;
 
         const dataPoints = data.points.map((item) => ({
           label: item.name,
@@ -40,7 +49,7 @@ export const useUserStore = defineStore("UserStore", {
         this.Points = dataPoints;
 
         this.newUser = [];
-        LocalStorage.set("data", JSON.stringify(data));
+        //LocalStorage.set("data", JSON.stringify(data)); // ojooo save data in localstorage
       } catch (error) {
         console.log(error);
       }
@@ -75,7 +84,7 @@ export const useUserStore = defineStore("UserStore", {
 
     async addType(name, abbreviation, description, icon) {
       try {
-        const { data } = await api.post("/api/user/role", {
+        const { data } = await api.post("/api/users/role", {
           type: {
             name,
             abbreviation,
@@ -89,7 +98,7 @@ export const useUserStore = defineStore("UserStore", {
           icon: item.type.icon,
           value: item._id,
         }));
-        this.Type = dataType;
+        this.Types = dataType;
       } catch (error) {
         console.log(error);
       }
@@ -97,12 +106,15 @@ export const useUserStore = defineStore("UserStore", {
 
     async addArea(name, abbreviation, description, icon, idType) {
       try {
-        const { data } = await api.post("/api/user/role-area/" + idType.value, {
-          name,
-          abbreviation,
-          description,
-          icon,
-        });
+        const { data } = await api.post(
+          "/api/users/role-area/" + idType.value,
+          {
+            name,
+            abbreviation,
+            description,
+            icon,
+          }
+        );
         this.Roles = data.roles;
         this.selectAreas(idType.value);
       } catch (error) {
@@ -113,7 +125,7 @@ export const useUserStore = defineStore("UserStore", {
     async addPosition(name, abbreviation, description, icon, idType, idArea) {
       try {
         const { data } = await api.post(
-          "/api/user/role-area-position/" + idType.value + "/" + idArea.value,
+          "/api/users/role-area-position/" + idType.value + "/" + idArea.value,
           {
             name,
             abbreviation,
@@ -133,7 +145,7 @@ export const useUserStore = defineStore("UserStore", {
       console.log(idType.value, idArea.value);
       try {
         const { data } = await api.post(
-          "/api/user/role-area-access/" + idType.value + "/" + idArea.value,
+          "/api/users/role-area-access/" + idType.value + "/" + idArea.value,
           {
             name,
             abbreviation,
@@ -153,7 +165,7 @@ export const useUserStore = defineStore("UserStore", {
       console.log(idType.value, idArea.value, idAccess);
       try {
         const { data } = await api.post(
-          "/api/user/role-area-access-route/" +
+          "/api/users/role-area-access-route/" +
             idType.value +
             "/" +
             idArea.value +
@@ -193,29 +205,57 @@ export const useUserStore = defineStore("UserStore", {
     },
 
     async selectAreas(id) {
-      this.AreaTmp = this.Roles.find((role) => role._id === id).area;
-      this.Area = this.AreaTmp.map((item) => ({
+      this.AreasTmp = this.Roles.find((role) => role._id === id).area;
+      this.Area = this.AreasTmp.map((item) => ({
         label: item.name,
         value: item._id,
         icon: item.icon,
       }));
+      this.rolesUser.idType = id;
     },
 
     async selectPositionsAccess(id) {
-      this.PositionTmp = this.AreaTmp.find((area) => area._id === id).position;
+      this.PositionTmp = this.AreasTmp.find((area) => area._id === id).position;
       this.Position = this.PositionTmp.map((item) => ({
         label: item.name,
         value: item._id,
         icon: item.icon,
       }));
 
-      this.AccessTmp = this.AreaTmp.find((area) => area._id === id).access;
+      this.AccessTmp = this.AreasTmp.find((area) => area._id === id).access;
       this.Access = this.AccessTmp.map((item) => ({
         label: item.name,
         value: item._id,
         icon: "location_on",
         routes: item.routes,
       }));
+
+      this.rolesUser.idArea = id;
+    },
+
+    async selectPosition(id) {
+      this.rolesUser.idPosition = id;
+    },
+
+    async selectAccess(data) {
+      this.rolesUser.Access = data.map((item) => ({
+        idAccess: item.value,
+        routes: item.routes,
+      }));
+    },
+
+    async selectRoutes(data) {
+      /*       this.RoutesTmp = data.map(
+        (item) => item.map((item) => ({ value: item.value })) || []
+      );
+      */
+      this.RoutesTmp = data.map((item) => item.map((item) => item.value) || []);
+      this.RoutesTmp = this.RoutesTmp.flat();
+      const newAccess = this.rolesUser.Access.map((item) => ({
+        idAccess: item.idAccess,
+        routes: item.routes.filter((item) => this.RoutesTmp.includes(item._id)),
+      }));
+      this.Routes = newAccess;
     },
   },
 });

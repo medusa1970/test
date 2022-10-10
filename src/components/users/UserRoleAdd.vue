@@ -11,7 +11,7 @@
         v-bind:label="'Tipo de usuario'"
         v-bind:noData="'Sin datos, agregue uno'"
         v-bind:Icon="'supervisor_account'"
-        v-bind:data="userStore.Type"
+        v-bind:data="userStore.Types"
         @myDialog="addType = true"
       />
       <seladdSin
@@ -87,7 +87,14 @@
       </div>
     </div>
   </div>
-
+  <pre>{{ userStore.RoutesTmp }}</pre>
+  <br />
+  <pre>{{ userStore.Routes }}</pre>
+  <br />
+  <br />
+  rolesUser:
+  <pre>{{ userStore.rolesUser }}</pre>
+  <!--
   Type: {{ type }}
   <br />
   punto: {{ point }}
@@ -101,7 +108,7 @@
   rutas: {{ routes }}
   <br />
   <br />
-  <pre>{{ userStore.Roles }}</pre>
+  <pre>{{ userStore.Roles }}</pre> -->
 
   <dialog-add-type
     v-model="addType"
@@ -178,7 +185,22 @@ export default {
     const access = ref([]);
     const flagPoint = ref(false);
     const flagArea = ref(false);
-    const routes = ref([]);
+    const routes = ref([
+      [
+        {
+          label: "Ingreso / salida",
+          value: "633da73fe9f1d1f8b8a36ee8",
+          icon: "turn_right",
+        },
+      ],
+      [
+        {
+          label: "Pedidos del dia",
+          value: "633da769e9f1d1f8b8a36ef2",
+          icon: "turn_right",
+        },
+      ],
+    ]);
     const idAccess = ref("");
 
     watch(type, (data) => {
@@ -187,7 +209,6 @@ export default {
       point.value = "";
       position.value = "";
       access.value = [];
-      routes.value = [];
 
       if (data.label.toLowerCase() === "punto de venta") {
         flagPoint.value = true;
@@ -210,8 +231,17 @@ export default {
       access.value = [];
     });
 
+    watch(position, (data) => {
+      userStore.selectPosition(data.value);
+    });
+
     watch(access, (data) => {
-      console.log("access", data);
+      userStore.selectAccess(data);
+    });
+
+    //detectar change of select routes white index and add to array
+    watch(routes.value, (data) => {
+      userStore.selectRoutes(data);
     });
 
     return {
