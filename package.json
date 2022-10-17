@@ -24,7 +24,8 @@
     "eslint-config-prettier": "^8.1.0",
     "prettier": "^2.5.1",
     "@quasar/app-vite": "^1.0.0",
-    "autoprefixer": "^10.4.2"
+    "autoprefixer": "^10.4.2",
+    "@volar-plugins/vetur": "latest"
   },
   "engines": {
     "node": "^18 || ^16 || ^14.19",

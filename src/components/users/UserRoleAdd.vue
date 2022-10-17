@@ -87,15 +87,22 @@
       </div>
     </div>
   </div>
+  <br />
+  rutas: {{ routes }}
+  <br />
+
   <pre>{{ userStore.RoutesTmp }}</pre>
   <br />
-  <pre>{{ userStore.Routes }}</pre>
-  <br />
+  <!-- <pre>{{ userStore.Routes }}</pre> -->
   <br />
   rolesUser:
-  <pre>{{ userStore.rolesUser }}</pre>
+  <pre>{{ roleUser }}</pre>
+  <br />
+  ROLES
+  <br />
+  <pre>{{ userStore.Roles }}</pre>
   <!--
-  Type: {{ type }}
+
   <br />
   punto: {{ point }}
   <br />
@@ -142,7 +149,7 @@
   />
 </template>
 <script>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import seladdSin from "src/components/users/seladdSin.vue";
@@ -185,23 +192,73 @@ export default {
     const access = ref([]);
     const flagPoint = ref(false);
     const flagArea = ref(false);
-    const routes = ref([
-      [
-        {
-          label: "Ingreso / salida",
-          value: "633da73fe9f1d1f8b8a36ee8",
-          icon: "turn_right",
-        },
+    const routes = ref([]);
+    const routesTmp = ref([]);
+    const roleUser = ref({
+      type: "633cfeedf81f46d67b1806d8",
+      area: "633da67de9f1d1f8b8a36ec4",
+      position: "633da695e9f1d1f8b8a36eca",
+      access: ["633da6c8e9f1d1f8b8a36ed0", "633da6efe9f1d1f8b8a36ed7"],
+      routes: [
+        "633da717e9f1d1f8b8a36edf",
+        "633da73fe9f1d1f8b8a36ee8",
+        "633da769e9f1d1f8b8a36ef2",
+        "633da793e9f1d1f8b8a36efd",
       ],
-      [
-        {
-          label: "Pedidos del dia",
-          value: "633da769e9f1d1f8b8a36ef2",
-          icon: "turn_right",
-        },
-      ],
-    ]);
+    });
     const idAccess = ref("");
+
+    onMounted(async () => {
+      const dataUser = await userStore.Roles.find(
+        (item) => item._id === roleUser.value.type
+      );
+      type.value = {
+        label: dataUser.type.name,
+        value: dataUser._id,
+        icon: dataUser.type.icon,
+      };
+
+      const dataArea = await dataUser.area.find(
+        (item) => item._id === roleUser.value.area
+      );
+      area.value = {
+        label: dataArea.name,
+        value: dataArea._id,
+        icon: dataArea.icon,
+      };
+
+      const dataPosition = await dataArea.position.find(
+        (item) => item._id === roleUser.value.position
+      );
+      position.value = {
+        label: dataPosition.name,
+        value: dataPosition._id,
+        icon: dataPosition.icon,
+      };
+
+      await dataArea.access.map((item, index) => {
+        if (roleUser.value.access.indexOf(item._id) !== -1) {
+          access.value.push({
+            label: item.name,
+            value: item._id,
+            icon: item.icon,
+            routes: item.routes,
+          });
+          item.routes.map((i) => {
+            if (roleUser.value.routes.indexOf(i._id) !== -1) {
+              routesTmp.value.push({
+                label: i.name,
+                value: i._id,
+                icon: index,
+              });
+            }
+          });
+        }
+        routes.value.push(routesTmp.value);
+        routesTmp.value = [];
+      });
+      console.log("routesTmp", routesTmp.value);
+    });
 
     watch(type, (data) => {
       userStore.selectAreas(data.value); //captura id del tipo de usuario
@@ -263,6 +320,7 @@ export default {
       flagArea,
       routes,
       idAccess,
+      roleUser,
 
       async onSubmit() {
         try {

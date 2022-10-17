@@ -205,7 +205,7 @@ export const useUserStore = defineStore("UserStore", {
     },
 
     async selectAreas(id) {
-      this.AreasTmp = this.Roles.find((role) => role._id === id).area;
+      this.AreasTmp = await this.Roles.find((role) => role._id === id).area;
       this.Area = this.AreasTmp.map((item) => ({
         label: item.name,
         value: item._id,
