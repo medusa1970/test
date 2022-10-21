@@ -48,7 +48,7 @@ import { useUserStore } from "stores/user-store";
 import { useRouter } from "vue-router";
 
 export default defineComponent({
-  name: "AddUserPg",
+  name: "EditUserPg",
   components: { UserDataPut, UserRoleAdd },
   setup() {
     const userStore = useUserStore();

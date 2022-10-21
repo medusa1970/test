@@ -82,7 +82,13 @@
           </div>
         </div>
       </q-toolbar>
-      <q-tabs v-model="tab" inline-label class="bg-orange text-white shadow-2">
+      <q-tabs
+        v-model="tab"
+        inline-label
+        class="bg-orange text-white shadow-2"
+        mobile-arrows
+        outside-arrows
+      >
         <q-tab
           v-for="(menuItem, index) in menuList"
           :key="index"
@@ -92,13 +98,7 @@
       </q-tabs>
     </q-header>
 
-    <q-drawer
-      v-model="drawer"
-      :width="250"
-      :breakpoint="500"
-      bordered
-      class="bg-grey-3"
-    >
+    <q-drawer v-model="drawer" :width="250" :breakpoint="500" bordered class="bg-grey-3">
       <q-scroll-area class="fit">
         <q-list>
           <template v-for="(menuItem, index) in menuList" :key="index">
@@ -135,11 +135,7 @@
 
       <!-- Notice v-close-popup -->
       <q-card-actions class="justify-center">
-        <q-btn
-          color="blue-grey-8"
-          label="Cancelar"
-          v-close-popup="!cancelEnabled"
-        />
+        <q-btn color="blue-grey-8" label="Cancelar" v-close-popup="!cancelEnabled" />
       </q-card-actions>
     </q-card>
   </q-dialog>

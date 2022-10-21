@@ -1,6 +1,6 @@
 <template>
   <div class="row q-pa-md justify-center">
-    <div class="col-xs-10 col-sm-6 col-md-5 col-lg-5 col-xl-2">
+    <div class="col-xs-10 col-sm-6 col-md-5 col-lg-4 col-xl-2">
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-lg q-mt-md">
         <h6 class="q-my-md">Datos de acceso</h6>
         <q-input
@@ -14,8 +14,7 @@
               (val && val.length > 4) ||
               'Ingresa tu usuario o email, minimo 6 caracteres',
             (val) =>
-              val.length < 31 ||
-              'Ingresa tu usuario o email, maximo 50 caracteres',
+              val.length < 31 || 'Ingresa tu usuario o email, maximo 50 caracteres',
           ]"
         />
 
@@ -53,13 +52,7 @@
         label="Olvido su password"
         class="col-4 q-mt-xs"
       />
-      <q-btn
-        to="/signup"
-        icon="person"
-        flat
-        label="Registrate"
-        class="col-4 q-mt-xs"
-      />
+      <q-btn to="/signup" icon="person" flat label="Registrate" class="col-4 q-mt-xs" />
     </div>
   </div>
 </template>
@@ -90,7 +83,7 @@ export default {
             textColor: "white",
             message: `Bienvenido ${authStore.loggedIn.username}`,
           });
-          if (authStore.loggedIn.type !== "user") {
+          if (authStore.loggedIn.type !== "active") {
             router.push("/redirect");
           } else {
             router.push("/");

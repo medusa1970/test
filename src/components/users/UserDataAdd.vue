@@ -201,30 +201,10 @@ export default {
             username: username.value,
             password: password.value,
           };
+          console.log(dataForm);
           // verificar si array newUser esta vacio
-          if (Object.keys(userStore.newUser).length === 0) {
-            const { data } = await api.post("/api/user", dataForm);
-            console.log(data);
-            $q.notify({
-              message: `${first_name.value} ${last_name.value} se agrego correctamente`,
-              color: "positive",
-              position: "top",
-            });
-            userStore.addUser(data.user);
-          } else {
-            console.log("actualizando");
-            const { data } = await api.put(
-              `/api/user/${userStore.newUser._id}`,
-              dataForm
-            );
-            console.log(data);
-            $q.notify({
-              message: `${first_name.value} ${last_name.value} se actualizo correctamente`,
-              color: "positive",
-              position: "top",
-            });
-            userStore.addUser(data.user);
-          }
+          const response = await api.post("/api/users", dataForm);
+          console.log(response);
         } catch (error) {
           $q.dialog({
             title: "ERROR",

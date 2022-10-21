@@ -15,9 +15,8 @@ export const useAuthStore = defineStore("AuthStore", {
           username,
           password,
         });
-        console.log(data);
         LocalStorage.set("loggedIn", {
-          type: data.type,
+          type: "admin",
           token: data.token,
           refreshtoken: data.refreshtoken,
           username: data.username,

@@ -31,7 +31,7 @@
         v-bind:label="'Area de trabajo'"
         v-bind:noData="'Sin datos, agregue uno'"
         v-bind:Icon="'dashboard'"
-        v-bind:data="userStore.Area"
+        v-bind:data="userStore.Areas"
         @myDialog="addArea = true"
       />
 
@@ -87,13 +87,18 @@
       </div>
     </div>
   </div>
-  <br />
-  rutas: {{ routes }}
-  <br />
 
-  <pre>{{ userStore.RoutesTmp }}</pre>
+<!--
   <br />
-  <!-- <pre>{{ userStore.Routes }}</pre> -->
+  type: {{ type }}<br />
+  point: {{ point }}<br />
+  area: {{ area }}<br />
+  position: {{ position }}<br />
+  access: {{ access }}<br />
+  routes: {{ routes }}<br />
+  <br />
+ -->
+
   <br />
   rolesUser:
   <pre>{{ roleUser }}</pre>
@@ -101,21 +106,7 @@
   ROLES
   <br />
   <pre>{{ userStore.Roles }}</pre>
-  <!--
-
   <br />
-  punto: {{ point }}
-  <br />
-  Area: {{ area }}
-  <br />
-  posicion: {{ position }}
-  <br />
-  Accesos: {{ access }}
-  <br />
-  rutas: {{ routes }}
-  <br />
-  <br />
-  <pre>{{ userStore.Roles }}</pre> -->
 
   <dialog-add-type
     v-model="addType"
@@ -266,6 +257,7 @@ export default {
       point.value = "";
       position.value = "";
       access.value = [];
+      routes.value = [];
 
       if (data.label.toLowerCase() === "punto de venta") {
         flagPoint.value = true;
@@ -286,6 +278,7 @@ export default {
       userStore.selectPositionsAccess(data.value); //captura id del area
       position.value = "";
       access.value = [];
+      routes.value = [];
     });
 
     watch(position, (data) => {

@@ -31,15 +31,9 @@ export const useUserStore = defineStore("UserStore", {
         const { data } = await api.get("api/users");
         this.Users = data.users;
         this.Roles = data.roles;
-        const dataType = this.Roles.map((item) => ({
-          label: item.type.name,
-          icon: item.type.icon,
-          value: item._id,
-        }));
-
+        this.selectTypes();
         $q.loading.hide();
 
-        this.Types = dataType;
 
         const dataPoints = data.points.map((item) => ({
           label: item.name,
@@ -93,12 +87,26 @@ export const useUserStore = defineStore("UserStore", {
           },
         });
         this.Roles = data.roles;
-        const dataType = this.Roles.map((item) => ({
-          label: item.type.name,
-          icon: item.type.icon,
-          value: item._id,
-        }));
-        this.Types = dataType;
+        this.selectTypes();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async addPoint(name, abbreviation, address, phone) {
+      try {
+        const { data } = await api.post("/api/points", {
+          name,
+          abbreviation,
+          address,
+          phone,
+        });
+        // push new point to array
+        this.Points.push({
+          label: data.point.name,
+          value: data.point._id,
+          icon: "location_on",
+        });
       } catch (error) {
         console.log(error);
       }
@@ -134,7 +142,7 @@ export const useUserStore = defineStore("UserStore", {
           }
         );
         this.Roles = data.roles;
-        this.selectAreas(idType.value);
+        await this.selectAreas(idType.value);
         this.selectPositionsAccess(idArea.value);
       } catch (error) {
         console.log(error);
@@ -154,7 +162,7 @@ export const useUserStore = defineStore("UserStore", {
           }
         );
         this.Roles = data.roles;
-        this.selectAreas(idType.value);
+        await this.selectAreas(idType.value);
         this.selectPositionsAccess(idArea.value);
       } catch (error) {
         console.log(error);
@@ -178,35 +186,25 @@ export const useUserStore = defineStore("UserStore", {
           }
         );
         this.Roles = data.roles;
-        this.selectAreas(idType.value);
+        await this.selectAreas(idType.value);
         this.selectPositionsAccess(idArea.value);
       } catch (error) {
         console.log(error);
       }
     },
 
-    async addPoint(name, abbreviation, address, phone) {
-      try {
-        const { data } = await api.post("/api/point", {
-          name,
-          abbreviation,
-          address,
-          phone,
-        });
-        // push new point to array
-        this.Points.push({
-          label: data.point.name,
-          value: data.point._id,
-          icon: "location_on",
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    async selectTypes() {
+      const dataType = this.Roles.map((item) => ({
+        label: item.type.name,
+        icon: item.type.icon,
+        value: item._id,
+      }));
+      this.Types = dataType;
+  },
 
     async selectAreas(id) {
       this.AreasTmp = await this.Roles.find((role) => role._id === id).area;
-      this.Area = this.AreasTmp.map((item) => ({
+      this.Areas = this.AreasTmp.map((item) => ({
         label: item.name,
         value: item._id,
         icon: item.icon,
