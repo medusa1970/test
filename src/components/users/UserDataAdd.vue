@@ -201,10 +201,9 @@ export default {
             username: username.value,
             password: password.value,
           };
-          console.log(dataForm);
-          // verificar si array newUser esta vacio
-          const response = await api.post("/api/users", dataForm);
-          console.log(response);
+          const { data } = await api.post("/api/users", dataForm);
+          userStore.addUser(data.users, data.id);
+          router.push("/admin/edit-user");
         } catch (error) {
           $q.dialog({
             title: "ERROR",

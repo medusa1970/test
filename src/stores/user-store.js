@@ -6,7 +6,8 @@ export const useUserStore = defineStore("UserStore", {
   state: () => ({
     Users: [],
     Roles: [],
-    rolesUser: {},
+    rolesUser: [],
+    rolesCurrent: [],
     Types: [],
     Areas: [],
     AreasTmp: [],
@@ -49,23 +50,33 @@ export const useUserStore = defineStore("UserStore", {
       }
     },
 
-    addUser(user) {
+/*     addUser(user) {
       this.Users.push(user);
       this.newUser = user;
     },
+ */
+    addUser(users, id) {
+      this.Users= users;
+      console.log(users, id);
+      // load function editUser(id)
+      this.editUser(id);
+    },
+
     putUser(email, username, password) {
       this.newUser.email = email;
       this.newUser.username = username;
       this.newUser.password = password;
     },
 
-    editUser(id) {
-      const data = this.Users.find((user) => user._id === id);
-      this.newUser = data;
+    async editUser(id) {
+      const userCurrent = this.Users.find((user) => user._id === id);
+      this.newUser = userCurrent;
+      const {data} = await api.get(`api/users/role-user/${id}`);
+      this.rolesCurrent = await data.rolesUser;
+      this.rolesUser = await data.rolesUser;
     },
 
     async deleteUser(_id) {
-      console.log(_id);
       try {
         await api.put(`/api/user/${_id}`, {
           state: "deleted",
@@ -187,7 +198,7 @@ export const useUserStore = defineStore("UserStore", {
         );
         this.Roles = data.roles;
         await this.selectAreas(idType.value);
-        this.selectPositionsAccess(idArea.value);
+        await this.selectPositionsAccess(idArea.value);
       } catch (error) {
         console.log(error);
       }
@@ -200,19 +211,26 @@ export const useUserStore = defineStore("UserStore", {
         value: item._id,
       }));
       this.Types = dataType;
-  },
+    },
+
+    async selectPoint(id) {
+      this.rolesUser.point = id;
+    },
 
     async selectAreas(id) {
+      delete this.rolesUser.area;
       this.AreasTmp = await this.Roles.find((role) => role._id === id).area;
       this.Areas = this.AreasTmp.map((item) => ({
         label: item.name,
         value: item._id,
         icon: item.icon,
       }));
-      this.rolesUser.idType = id;
+      this.rolesUser.type = id;
+      this.rolesUser._id = this.newUser._id
     },
 
     async selectPositionsAccess(id) {
+      if (id === undefined) return;
       this.PositionTmp = this.AreasTmp.find((area) => area._id === id).position;
       this.Position = this.PositionTmp.map((item) => ({
         label: item.name,
@@ -228,32 +246,19 @@ export const useUserStore = defineStore("UserStore", {
         routes: item.routes,
       }));
 
-      this.rolesUser.idArea = id;
+      this.rolesUser.area = id;
     },
 
     async selectPosition(id) {
-      this.rolesUser.idPosition = id;
+      this.rolesUser.position = id;
     },
 
     async selectAccess(data) {
-      this.rolesUser.Access = data.map((item) => ({
-        idAccess: item.value,
-        routes: item.routes,
-      }));
+      this.rolesUser.access = data.map((item) => item.value);
     },
 
     async selectRoutes(data) {
-      /*       this.RoutesTmp = data.map(
-        (item) => item.map((item) => ({ value: item.value })) || []
-      );
-      */
-      this.RoutesTmp = data.map((item) => item.map((item) => item.value) || []);
-      this.RoutesTmp = this.RoutesTmp.flat();
-      const newAccess = this.rolesUser.Access.map((item) => ({
-        idAccess: item.idAccess,
-        routes: item.routes.filter((item) => this.RoutesTmp.includes(item._id)),
-      }));
-      this.Routes = newAccess;
+      this.rolesUser.routes = data.map((item) => item.map((item) => item.value)).flat();
     },
   },
 });

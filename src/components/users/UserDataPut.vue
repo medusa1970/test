@@ -100,9 +100,14 @@
           <q-btn label="Cancelar" type="reset" color="grey-6" class="q-ml-sm" />
         </div>
       </q-form>
-      {{ userStore.newUser }}
-    </div>
+<!--       {{ userStore.newUser }}
+ -->    </div>
   </div>
+
+    <br />
+  store rolesUser:
+  <pre>{{ userStore.rolesUser }}</pre>
+
 </template>
 <script>
 import { ref } from "vue";
@@ -174,7 +179,6 @@ export default {
           // verificar si array newUser esta vacio
           if (Object.keys(userStore.newUser).length === 0) {
             const { data } = await api.post("/api/user", dataForm);
-            console.log(data);
             $q.notify({
               message: `${first_name.value} ${last_name.value} se agrego correctamente`,
               color: "positive",
@@ -211,9 +215,10 @@ export default {
         address.value = "";
       },
 
-      myFunction(data) {
+      /* myFunction(data) {
         console.log(data);
-      },
+      }, */
+
     };
   },
 };

@@ -100,7 +100,11 @@
  -->
 
   <br />
-  rolesUser:
+  store rolesUser:
+  <pre>{{ userStore.rolesUser }}</pre>
+  <br />
+  <br />
+  roleUser:
   <pre>{{ roleUser }}</pre>
   <br />
   ROLES
@@ -140,7 +144,7 @@
   />
 </template>
 <script>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import seladdSin from "src/components/users/seladdSin.vue";
@@ -181,27 +185,24 @@ export default {
     const point = ref("");
     const area = ref("");
     const access = ref([]);
+    const routes = ref({});
     const flagPoint = ref(false);
     const flagArea = ref(false);
-    const routes = ref([]);
     const routesTmp = ref([]);
     const roleUser = ref({
-      type: "633cfeedf81f46d67b1806d8",
-      area: "633da67de9f1d1f8b8a36ec4",
-      position: "633da695e9f1d1f8b8a36eca",
-      access: ["633da6c8e9f1d1f8b8a36ed0", "633da6efe9f1d1f8b8a36ed7"],
-      routes: [
-        "633da717e9f1d1f8b8a36edf",
-        "633da73fe9f1d1f8b8a36ee8",
-        "633da769e9f1d1f8b8a36ef2",
-        "633da793e9f1d1f8b8a36efd",
-      ],
+      type: userStore.rolesUser.type,
+      point: userStore.rolesUser.point,
+      area: userStore.rolesUser.area,
+      position: userStore.rolesUser.position,
+      access: userStore.rolesUser.access,
+      routes: userStore.rolesUser.routes,
     });
     const idAccess = ref("");
 
     onMounted(async () => {
+      console.log("1userStore.rolesUser.access", userStore.rolesUser.access);
       const dataUser = await userStore.Roles.find(
-        (item) => item._id === roleUser.value.type
+        (item) => item._id === userStore.rolesUser.type
       );
       type.value = {
         label: dataUser.type.name,
@@ -209,8 +210,9 @@ export default {
         icon: dataUser.type.icon,
       };
 
+      console.log("2userStore.rolesUser.access", userStore.rolesUser.access);
       const dataArea = await dataUser.area.find(
-        (item) => item._id === roleUser.value.area
+        (item) => item._id === userStore.rolesUser.area
       );
       area.value = {
         label: dataArea.name,
@@ -218,8 +220,9 @@ export default {
         icon: dataArea.icon,
       };
 
+      console.log("3userStore.rolesUser.access", userStore.rolesUser.access);
       const dataPosition = await dataArea.position.find(
-        (item) => item._id === roleUser.value.position
+        (item) => item._id === userStore.rolesUser.position
       );
       position.value = {
         label: dataPosition.name,
@@ -227,8 +230,10 @@ export default {
         icon: dataPosition.icon,
       };
 
+      console.log("4userStore.rolesUser.access", userStore.rolesUser.access);
       await dataArea.access.map((item, index) => {
-        if (roleUser.value.access.indexOf(item._id) !== -1) {
+        console.log("dataArea.access", dataArea.access);
+        if (userStore.rolesUser.access.indexOf(item._id) !== -1) {
           access.value.push({
             label: item.name,
             value: item._id,
@@ -236,7 +241,7 @@ export default {
             routes: item.routes,
           });
           item.routes.map((i) => {
-            if (roleUser.value.routes.indexOf(i._id) !== -1) {
+            if (userStore.rolesUser.routes.indexOf(i._id) !== -1) {
               routesTmp.value.push({
                 label: i.name,
                 value: i._id,
@@ -248,7 +253,6 @@ export default {
         routes.value.push(routesTmp.value);
         routesTmp.value = [];
       });
-      console.log("routesTmp", routesTmp.value);
     });
 
     watch(type, (data) => {
@@ -269,6 +273,7 @@ export default {
     });
 
     watch(point, (data) => {
+      userStore.selectPoint(data.value); //captura id del punto de venta
       if (data) {
         flagArea.value = true;
       }
@@ -285,16 +290,24 @@ export default {
       userStore.selectPosition(data.value);
     });
 
-    watch(access, (data) => {
-      userStore.selectAccess(data);
-    });
+    watch(
+      () => access.value,
+      (data) => {
+        userStore.selectAccess(data);
+      },
+      { deep: true }
+    );
 
-    //detectar change of select routes white index and add to array
-    watch(routes.value, (data) => {
-      userStore.selectRoutes(data);
-    });
+// detect change with $set of routes[]
+    watch(
+      () => routes.value,
+      (data) => {
+        userStore.selectRoutes(data);
+      },
+      { deep: true }
+    );
 
-    return {
+return {
       router,
       $q,
       userStore,
@@ -405,6 +418,7 @@ export default {
         idAccess.value = idAcc; //variable que guarda el id del acceso seleccionado
         addRoute.value = true;
       },
+
     };
   },
 };
