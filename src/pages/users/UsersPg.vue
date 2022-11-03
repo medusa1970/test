@@ -94,10 +94,11 @@ export default defineComponent({
       userStore,
       router,
 
-      myedit(row) {
-        userStore.editUser(row._id);
+      async myedit(row) {
+        await userStore.editUser(row._id);
         router.push("edit-user");
       },
+
       mydelete(row) {
         $q.dialog({
           title: "Confirm",

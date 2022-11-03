@@ -100,13 +100,13 @@
           <q-btn label="Cancelar" type="reset" color="grey-6" class="q-ml-sm" />
         </div>
       </q-form>
-<!--       {{ userStore.newUser }}
- -->    </div>
+    </div>
   </div>
 
-    <br />
-  store rolesUser:
-  <pre>{{ userStore.rolesUser }}</pre>
+  <br>
+  {{ userStore.newUser }}
+  <br>
+  {{ userStore.rolesUser }}
 
 </template>
 <script>

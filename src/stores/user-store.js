@@ -6,8 +6,8 @@ export const useUserStore = defineStore("UserStore", {
   state: () => ({
     Users: [],
     Roles: [],
-    rolesUser: [],
-    rolesCurrent: [],
+    rolesUser: {},
+    rolesNew: {},
     Types: [],
     Areas: [],
     AreasTmp: [],
@@ -32,7 +32,6 @@ export const useUserStore = defineStore("UserStore", {
         const { data } = await api.get("api/users");
         this.Users = data.users;
         this.Roles = data.roles;
-        this.selectTypes();
         $q.loading.hide();
 
 
@@ -57,8 +56,6 @@ export const useUserStore = defineStore("UserStore", {
  */
     addUser(users, id) {
       this.Users= users;
-      console.log(users, id);
-      // load function editUser(id)
       this.editUser(id);
     },
 
@@ -69,11 +66,13 @@ export const useUserStore = defineStore("UserStore", {
     },
 
     async editUser(id) {
-      const userCurrent = this.Users.find((user) => user._id === id);
-      this.newUser = userCurrent;
-      const {data} = await api.get(`api/users/role-user/${id}`);
-      this.rolesCurrent = await data.rolesUser;
-      this.rolesUser = await data.rolesUser;
+      this.newUser = await this.Users.find((user) => user._id === id);
+      try {
+        const {data} = await api.get(`api/users/role-user/${id}`);
+        this.rolesUser = data.rolesUser;
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     async deleteUser(_id) {
@@ -98,7 +97,7 @@ export const useUserStore = defineStore("UserStore", {
           },
         });
         this.Roles = data.roles;
-        this.selectTypes();
+        this.buildTypes();
       } catch (error) {
         console.log(error);
       }
@@ -135,7 +134,7 @@ export const useUserStore = defineStore("UserStore", {
           }
         );
         this.Roles = data.roles;
-        this.selectAreas(idType.value);
+        this.buildAreas(idType.value);
       } catch (error) {
         console.log(error);
       }
@@ -153,15 +152,14 @@ export const useUserStore = defineStore("UserStore", {
           }
         );
         this.Roles = data.roles;
-        await this.selectAreas(idType.value);
-        this.selectPositionsAccess(idArea.value);
+        await this.buildAreas(idType.value);
+        this.buildPositionsAccess(idArea.value);
       } catch (error) {
         console.log(error);
       }
     },
 
     async addAccess(name, abbreviation, description, icon, idType, idArea) {
-      console.log(idType.value, idArea.value);
       try {
         const { data } = await api.post(
           "/api/users/role-area-access/" + idType.value + "/" + idArea.value,
@@ -173,15 +171,14 @@ export const useUserStore = defineStore("UserStore", {
           }
         );
         this.Roles = data.roles;
-        await this.selectAreas(idType.value);
-        this.selectPositionsAccess(idArea.value);
+        await this.buildAreas(idType.value);
+        this.buildPositionsAccess(idArea.value);
       } catch (error) {
         console.log(error);
       }
     },
 
     async addRoute(name, route, description, idType, idArea, idAccess) {
-      console.log(idType.value, idArea.value, idAccess);
       try {
         const { data } = await api.post(
           "/api/users/role-area-access-route/" +
@@ -197,39 +194,40 @@ export const useUserStore = defineStore("UserStore", {
           }
         );
         this.Roles = data.roles;
-        await this.selectAreas(idType.value);
-        await this.selectPositionsAccess(idArea.value);
+        await this.buildAreas(idType.value);
+        await this.buildPositionsAccess(idArea.value);
       } catch (error) {
         console.log(error);
       }
     },
 
-    async selectTypes() {
-      const dataType = this.Roles.map((item) => ({
+    async deleteRolesUser(key) {
+      var flag = false;
+      if (key == "type" || flag) { this.rolesUser.type = ""; flag = true; }
+      if (key == "point" || flag) { this.rolesUser.point = ""; flag = true; }
+      if (key == "area" || flag) { this.rolesUser.area = ""; flag = true; }
+      if (key == "position" || flag) { this.rolesUser.position = ""; flag = true; }
+      if (key == "access" || flag) { this.rolesUser.access = []; this.rolesUser.routes = []; }
+    },
+
+    async buildTypes() {
+      this.Types = this.Roles.map((item) => ({
         label: item.type.name,
         icon: item.type.icon,
         value: item._id,
       }));
-      this.Types = dataType;
     },
 
-    async selectPoint(id) {
-      this.rolesUser.point = id;
-    },
-
-    async selectAreas(id) {
-      delete this.rolesUser.area;
+    async buildAreas(id) {
       this.AreasTmp = await this.Roles.find((role) => role._id === id).area;
       this.Areas = this.AreasTmp.map((item) => ({
         label: item.name,
         value: item._id,
         icon: item.icon,
       }));
-      this.rolesUser.type = id;
-      this.rolesUser._id = this.newUser._id
     },
 
-    async selectPositionsAccess(id) {
+    async buildPositionsAccess(id) {
       if (id === undefined) return;
       this.PositionTmp = this.AreasTmp.find((area) => area._id === id).position;
       this.Position = this.PositionTmp.map((item) => ({
@@ -245,20 +243,45 @@ export const useUserStore = defineStore("UserStore", {
         icon: "location_on",
         routes: item.routes,
       }));
+    },
 
-      this.rolesUser.area = id;
+    // Asignar valores de los selectores a rolesUser
+    async selectType(id) {
+      this.rolesNew.type = id;
+    },
+
+    async selectPoint(id) {
+      this.rolesNew.point = id;
+    },
+    async selectArea(id) {
+      this.rolesNew.area = id;
     },
 
     async selectPosition(id) {
-      this.rolesUser.position = id;
+      this.rolesNew.position = id;
     },
 
     async selectAccess(data) {
-      this.rolesUser.access = data.map((item) => item.value);
+      this.rolesNew.access = data.map((item) => item.value);
     },
 
     async selectRoutes(data) {
-      this.rolesUser.routes = data.map((item) => item.map((item) => item.value)).flat();
+      this.rolesNew.routes = data.map((item) => item.map((item) => item.value)).flat();
+    },
+
+    async saveRoles(password) {
+      try {
+        const { data } = await api.post(`/api/users/role-user/${this.newUser._id}`, {rolesNew: this.rolesNew, username: this.newUser.username, password});
+        this.rolesUser = data.roleUser;
+        if(data.error === null){
+          return {value: true, message: data.message};
+        }else{
+          return {value: false, message: data.message};
+        };
+      } catch (error) {
+        console.log(error);
+        return {value: false, message: data.message};
+      }
     },
   },
 });

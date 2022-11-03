@@ -55,11 +55,10 @@ export default defineComponent({
     const router = useRouter();
 
     onMounted(() => {
-      if (Object.keys(userStore.newUser).length === 0) {
-        // si la ruta es actualizada no hay usuario seleccionado y lo redirecciona a lista de usuarios
+/*       if (Object.keys(userStore.newUser).length === 0) {
         router.push("/admin/users");
       }
-    });
+ */    });
 
     return {
       tab: ref("data"),

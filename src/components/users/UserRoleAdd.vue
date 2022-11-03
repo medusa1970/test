@@ -1,6 +1,11 @@
 <template>
   <div class="row justify-center">
-    <div class="col-xs-10 col-sm-6 col-md-5 col-lg-5 col-xl-2 q-gutter-y-md q-mt-xs">
+    <div
+      class="
+        col-xs-10 col-sm-6 col-md-5 col-lg-5 col-xl-2
+        q-gutter-y-md q-mt-xs
+      "
+    >
       <h6 class="q-ma-none">
         {{ userStore.newUser.first_name }} {{ userStore.newUser.last_name }}
       </h6>
@@ -82,35 +87,23 @@
         </q-card-section>
       </q-card>
       <div>
-        <q-btn label="Guardar" type="submit" color="orange" />
+        <q-btn
+          label="Guardar"
+          type="button"
+          color="orange"
+          @click="saveRoles"
+        />
         <q-btn label="Cancelar" type="reset" color="grey-6" class="q-ml-sm" />
       </div>
     </div>
   </div>
 
-<!--
+  <!-- //***********PRUEVAS******************************* -->
   <br />
-  type: {{ type }}<br />
-  point: {{ point }}<br />
-  area: {{ area }}<br />
-  position: {{ position }}<br />
-  access: {{ access }}<br />
-  routes: {{ routes }}<br />
+  userStore.rolesNew {{ userStore.rolesNew }} <br /><br />
   <br />
- -->
 
-  <br />
-  store rolesUser:
-  <pre>{{ userStore.rolesUser }}</pre>
-  <br />
-  <br />
-  roleUser:
-  <pre>{{ roleUser }}</pre>
-  <br />
-  ROLES
-  <br />
-  <pre>{{ userStore.Roles }}</pre>
-  <br />
+  <!-- //***********PRUEVAS******************************* -->
 
   <dialog-add-type
     v-model="addType"
@@ -144,7 +137,7 @@
   />
 </template>
 <script>
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import seladdSin from "src/components/users/seladdSin.vue";
@@ -188,75 +181,78 @@ export default {
     const routes = ref({});
     const flagPoint = ref(false);
     const flagArea = ref(false);
-    const routesTmp = ref([]);
-    const roleUser = ref({
-      type: userStore.rolesUser.type,
-      point: userStore.rolesUser.point,
-      area: userStore.rolesUser.area,
-      position: userStore.rolesUser.position,
-      access: userStore.rolesUser.access,
-      routes: userStore.rolesUser.routes,
-    });
     const idAccess = ref("");
+    const routesTmp = ref([]);
 
     onMounted(async () => {
-      console.log("1userStore.rolesUser.access", userStore.rolesUser.access);
-      const dataUser = await userStore.Roles.find(
+      userStore.buildTypes(); // inicializo los tipos de usuario
+
+      const dataType = await userStore.Roles.find(
         (item) => item._id === userStore.rolesUser.type
       );
-      type.value = {
-        label: dataUser.type.name,
-        value: dataUser._id,
-        icon: dataUser.type.icon,
-      };
+      if (dataType !== undefined) {
+        type.value = {
+          label: dataType.type.name,
+          value: dataType._id,
+          icon: dataType.type.icon,
+        };
 
-      console.log("2userStore.rolesUser.access", userStore.rolesUser.access);
-      const dataArea = await dataUser.area.find(
-        (item) => item._id === userStore.rolesUser.area
-      );
-      area.value = {
-        label: dataArea.name,
-        value: dataArea._id,
-        icon: dataArea.icon,
-      };
-
-      console.log("3userStore.rolesUser.access", userStore.rolesUser.access);
-      const dataPosition = await dataArea.position.find(
-        (item) => item._id === userStore.rolesUser.position
-      );
-      position.value = {
-        label: dataPosition.name,
-        value: dataPosition._id,
-        icon: dataPosition.icon,
-      };
-
-      console.log("4userStore.rolesUser.access", userStore.rolesUser.access);
-      await dataArea.access.map((item, index) => {
-        console.log("dataArea.access", dataArea.access);
-        if (userStore.rolesUser.access.indexOf(item._id) !== -1) {
-          access.value.push({
-            label: item.name,
-            value: item._id,
-            icon: item.icon,
-            routes: item.routes,
-          });
-          item.routes.map((i) => {
-            if (userStore.rolesUser.routes.indexOf(i._id) !== -1) {
-              routesTmp.value.push({
-                label: i.name,
-                value: i._id,
-                icon: index,
-              });
-            }
-          });
+        const dataPoint = await userStore.Points.find(
+          (item) => item.value === userStore.rolesUser.point
+        );
+        if (dataPoint) {
+          point.value = {
+            label: dataPoint.label,
+            value: dataPoint.value,
+            icon: dataPoint.icon,
+          };
         }
-        routes.value.push(routesTmp.value);
+
+        const dataArea = await dataType.area.find(
+          (item) => item._id === userStore.rolesUser.area
+        );
+        area.value = {
+          label: dataArea.name,
+          value: dataArea._id,
+          icon: dataArea.icon,
+        };
+
+        const dataPosition = await dataArea.position.find(
+          (item) => item._id === userStore.rolesUser.position
+        );
+        position.value = {
+          label: dataPosition.name,
+          value: dataPosition._id,
+          icon: dataPosition.icon,
+        };
         routesTmp.value = [];
-      });
+        await dataArea.access.map((item, index) => {
+          if (userStore.rolesUser.access.indexOf(item._id) !== -1) {
+            access.value.push({
+              label: item.name,
+              value: item._id,
+              icon: item.icon,
+              routes: item.routes,
+            });
+            item.routes.map((i) => {
+              if (userStore.rolesUser.routes.indexOf(i._id) !== -1) {
+                routesTmp.value.push({
+                  label: i.name,
+                  value: i._id,
+                  icon: "add",
+                });
+              }
+            });
+            routes.value[index] = routesTmp.value;
+            routesTmp.value = [];
+          }
+        });
+      }
     });
 
     watch(type, (data) => {
-      userStore.selectAreas(data.value); //captura id del tipo de usuario
+      userStore.buildAreas(data.value); //captura id del tipo de usuario
+      userStore.selectType(data.value); //captura id del tipo de usuario
       area.value = "";
       point.value = "";
       position.value = "";
@@ -280,7 +276,8 @@ export default {
     });
 
     watch(area, (data) => {
-      userStore.selectPositionsAccess(data.value); //captura id del area
+      userStore.buildPositionsAccess(data.value); //captura id del area
+      userStore.selectArea(data.value); //captura id del area
       position.value = "";
       access.value = [];
       routes.value = [];
@@ -298,7 +295,7 @@ export default {
       { deep: true }
     );
 
-// detect change with $set of routes[]
+    // detect change with $set of routes[]
     watch(
       () => routes.value,
       (data) => {
@@ -307,7 +304,7 @@ export default {
       { deep: true }
     );
 
-return {
+    return {
       router,
       $q,
       userStore,
@@ -326,9 +323,9 @@ return {
       flagArea,
       routes,
       idAccess,
-      roleUser,
+      routesTmp,
 
-      async onSubmit() {
+      /*       async onSubmit() {
         try {
           $q.dialog({
             title: "OK",
@@ -345,9 +342,14 @@ return {
           });
         }
       },
-
+ */
       addTypeFn(data) {
-        userStore.addType(data.name, data.abbreviation, data.description, data.icon);
+        userStore.addType(
+          data.name,
+          data.abbreviation,
+          data.description,
+          data.icon
+        );
         addType.value = false;
       },
 
@@ -363,7 +365,12 @@ return {
       },
 
       addPointFn(data) {
-        userStore.addPoint(data.name, data.abbreviation, data.address, data.phone);
+        userStore.addPoint(
+          data.name,
+          data.abbreviation,
+          data.address,
+          data.phone
+        );
         addPoint.value = false;
       },
 
@@ -379,8 +386,8 @@ return {
         addPosition.value = false;
       },
 
-      addAccessFn(data) {
-        userStore.addAccess(
+      async addAccessFn(data) {
+        await userStore.addAccess(
           data.name,
           data.abbreviation,
           data.description,
@@ -391,8 +398,8 @@ return {
         addAccess.value = false;
       },
 
-      addRouteFn(data) {
-        userStore.addRoute(
+      async addRouteFn(data) {
+        await userStore.addRoute(
           data.name,
           data.route,
           data.description,
@@ -401,24 +408,48 @@ return {
           idAccess.value
         );
         addRoute.value = false;
-        //push in access.routes new route
-        const newRoute = {
-          name: data.name,
-          route: data.route,
-          description: data.description,
-        };
-        access.value.map((item) => {
-          if (item.value === idAccess.value) {
-            item.routes.push(newRoute);
-          }
-        });
+        // actualizamos access.value con el nuevo valor de routes
+        access.value = userStore.Access.filter(
+          (item) => access.value.map((i) => i.value).indexOf(item.value) !== -1
+        );
       },
 
       addRouteSel(idAcc) {
-        idAccess.value = idAcc; //variable que guarda el id del acceso seleccionado
+        idAccess.value = idAcc; //variable que guarda el id del acceso seleccionado para agregar una ruta
         addRoute.value = true;
       },
 
+      saveRoles() {
+        $q.dialog({
+          title: "Asignación de roles",
+          message: `Usted esta asignando roles a: ${userStore.newUser.first_name} ${userStore.newUser.last_name} si esta seguro? Ingresa tu contraseña para continuar`,
+          prompt: {
+            model: `aaa`,
+            type: "password", // optional
+          },
+          cancel: true,
+          persistent: true,
+        }).onOk(async (data) => {
+          const result = await userStore.saveRoles(data);
+          if (result.value) {
+            $q.dialog({
+              title: "Asignación de roles",
+              message: result.message,
+              cancel: true,
+              persistent: true,
+            }).onOk(() => {
+              router.push("/admin/edit-user");
+            });
+          } else {
+            $q.dialog({
+              title: "Asignación de roles",
+              message: result.message,
+              cancel: true,
+              persistent: true,
+            }).onOk(() => {});
+          }
+        });
+      },
     };
   },
 };

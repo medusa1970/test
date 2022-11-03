@@ -20,7 +20,7 @@
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="data">
-          <user-data-put />
+          <user-data-add />
         </q-tab-panel>
 
         <q-tab-panel name="role">
@@ -41,30 +41,19 @@
   </div>
 </template>
 <script>
-import { ref, defineComponent, onMounted } from "vue";
-import UserDataPut from "src/components/users/UserDataPut.vue";
+import { ref, defineComponent } from "vue";
+import UserDataAdd from "src/components/users/UserDataAdd.vue";
 import UserRoleAdd from "src/components/users/UserRoleAdd.vue";
 import { useUserStore } from "stores/user-store";
-import { useRouter } from "vue-router";
 
 export default defineComponent({
-  name: "EditUserPg",
-  components: { UserDataPut, UserRoleAdd },
+  name: "AddUserPg",
+  components: { UserDataAdd, UserRoleAdd },
   setup() {
     const userStore = useUserStore();
-    const router = useRouter();
-
-    onMounted(() => {
-      if (Object.keys(userStore.newUser).length === 0) {
-        // si la ruta es actualizada no hay usuario seleccionado y lo redirecciona a lista de usuarios
-        router.push("/admin/users");
-      }
-    });
-
     return {
       tab: ref("data"),
       userStore,
-      router,
     };
   },
 });
