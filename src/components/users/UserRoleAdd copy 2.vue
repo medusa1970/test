@@ -7,7 +7,7 @@
       "
     >
       <h6 class="q-ma-none">
-        {{ userStore.newUser.first_name }} {{ userStore.newUser.last_name }}
+        {{ userStore.newUser.first_name }} {{ userStore.newUser._id }}
       </h6>
 
       <seladdSin
@@ -93,19 +93,22 @@
           color="orange"
           @click="saveRoles"
         />
-        <q-btn
-          label="Cancelar"
-          type="reset"
-          color="grey-6"
-          class="q-ml-sm"
-          @click="getInit"
-        />
+        <q-btn label="Cancelar" type="reset" color="grey-6" class="q-ml-sm" />
       </div>
     </div>
   </div>
 
   <!-- //***********PRUEVAS******************************* -->
-  <!-- rolesUser: {{ userStore.rolesUser }} <br /><br /> -->
+  <br />
+  access: {{ type }} <br /><br />
+  access: {{ access }} <br /><br />
+  routes: {{ routes }} <br /><br />
+  userStore.rolesNew: {{ userStore.rolesNew }} <br /><br />
+  userStore.rolesUser: {{ userStore.rolesUser }} <br /><br />
+
+  <br /><br />
+  <br />
+
   <!-- //***********PRUEVAS******************************* -->
 
   <dialog-add-type
@@ -187,7 +190,16 @@ export default {
     const idAccess = ref("");
     const routesTmp = ref([]);
 
-    const getInit = async () => {
+    onMounted(async () => {
+      userStore.buildTypes(); // inicializo los tipos de usuario
+
+      type.value = "";
+      area.value = "";
+      point.value = "";
+      position.value = "";
+      access.value = [];
+      routes.value = [];
+
       const dataType = await userStore.Roles.find(
         (item) => item._id === userStore.rolesUser.type
       );
@@ -227,36 +239,11 @@ export default {
           icon: dataPosition.icon,
         };
 
-        userStore.Access.map(async (item) => {
-          if (userStore.rolesUser.access.indexOf(item.value) !== -1) {
-            item.active = [];
-            access.value.push(item);
-            item.routes.map((r) => {
-              if (userStore.rolesUser.routes.indexOf(r._id) !== -1) {
-                item.active.push({
-                  label: r.name,
-                  value: r._id,
-                  icon: "add",
-                });
-              }
-            });
-          }
+        routesTmp.value = [];
+        await dataArea.access.map((item) => {
+          console.log("item", item);
         });
       }
-    };
-
-    onMounted(async () => {
-      userStore.buildTypes(); // inicializo los tipos de usuario
-
-      type.value = "";
-      area.value = "";
-      point.value = "";
-      position.value = "";
-      access.value = [];
-      routes.value = [];
-
-      //load function local getInit
-      getInit();
     });
 
     watch(type, (data) => {
@@ -304,6 +291,16 @@ export default {
       { deep: true }
     );
 
+    // detect change with $set of routes[]
+
+    watch(
+      () => routes.value,
+      (data) => {
+        userStore.selectRoutes(data);
+      },
+      { deep: true }
+    );
+
     return {
       router,
       $q,
@@ -324,7 +321,6 @@ export default {
       routes,
       idAccess,
       routesTmp,
-      getInit,
 
       watch: {
         routes: function () {

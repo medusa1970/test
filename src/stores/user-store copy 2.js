@@ -262,9 +262,12 @@ export const useUserStore = defineStore("UserStore", {
       this.rolesNew.position = id;
     },
 
-    async selectAccess(data) {
-      this.rolesNew.access = data.map((item) => { return item.value});
-      this.rolesNew.routes = data.map((item) => item.active.map((actv) => actv.value)).flat();
+    async selectAccess(data) { console.log(data);
+      this.rolesNew.access = data.map((item) =>
+        {
+          return item.value
+        }
+      );
     },
 
     async selectRoutes(data) {
